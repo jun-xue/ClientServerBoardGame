@@ -8,7 +8,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -18,15 +20,18 @@ public class mainClient
 	BufferedReader in;
 	PrintWriter out;
 	JFrame frame = new JFrame("Client");
-	JTextField data = new JTextField(40);
 	JTextArea message = new JTextArea(8, 60);
+	JScrollPane scrollPane = new JScrollPane(message);
+	JTextField data = new JTextField(40);
+	JList userList = new JList();
 	
 	public mainClient()
 	{
 		// Layout GUI
         message.setEditable(false);
-        frame.getContentPane().add(data, "North");
-        frame.getContentPane().add(new JScrollPane(message), "Center");
+        frame.getContentPane().add(data, "South");
+        frame.getContentPane().add(scrollPane, "Center");
+        frame.getContentPane().add(new JScrollPane(userList), "East");
 
         // Add Listeners
         data.addActionListener(new ActionListener() {
@@ -42,6 +47,8 @@ public class mainClient
                        response = "Error: " + ex;
                 }
                 message.append(response + "\n");
+                JScrollBar vertical = scrollPane.getVerticalScrollBar();
+                vertical.setValue(vertical.getMaximum());
                 data.selectAll();
             }
         });

@@ -6,17 +6,21 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class mainServer	
 {
+	static ArrayList<Integer> user = new ArrayList<Integer>();
+	
 	public static void main(String[] args) throws Exception
 	{
 		ServerSocket listener = new ServerSocket(42069);
-		int clientNumber = 0;
+		int clientNumber = 1;
 		try 
 		{
 			while(true)
 			{
+				user.add(clientNumber);
 				new Tester(listener.accept(), clientNumber++).start();
 			}
 		}
@@ -55,6 +59,13 @@ public class mainServer
 					if (input == null || input.equals("."))
 					{
 						break;
+					}
+					else if (input == ":users")
+					{
+						for (int item : user)
+						{
+							out.println("Client " + item);
+						}
 					}
 					else
 					{
