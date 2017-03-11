@@ -7,21 +7,24 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class mainServer	
 {
-	static ArrayList<Integer> user = new ArrayList<Integer>();
+	
+	static ArrayList<Socket> connectedUsers = new ArrayList<Socket>();
+	private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
 	
 	public static void main(String[] args) throws Exception
 	{
 		ServerSocket listener = new ServerSocket(42069);
-		int clientNumber = 1;
 		try 
 		{
 			while(true)
 			{
-				user.add(clientNumber);
-				new Tester(listener.accept(), clientNumber++).start();
+				Socket temp = listener.accept();
+				new Person(temp).start();
+				connectedUsers.add(temp);
 			}
 		}
 		finally
@@ -30,52 +33,42 @@ public class mainServer
 		}
 	}
 	
-	private static class Tester extends Thread 
+	private static class Person extends Thread 
 	{
+		private String username;
 		private Socket socket;
-		private int clientNumber;
 		
-		public Tester(Socket socket, int clientNumber)
+		private BufferedReader in;
+	    private PrintWriter out;
+		
+		public Person(Socket socket)
 		{
 			this.socket = socket;
-			this.clientNumber = clientNumber;
-			System.out.println("A challenger, " + clientNumber + " connected at " + socket);
+			System.out.println("A challenger, " + username + " connected at " + socket);
 		}
 		
 		public void run()
 		{
 			try
 			{
-				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				out = new PrintWriter(socket.getOutputStream(), true);
+				writers.add(out);
 				
-				out.println("Welcome challenger, you are client #" + clientNumber);
-				out.println("Enter a line with only a period to quit\n");
-				
+				out.println("Welcome " + username + ", welcome to the chatroom!");
 				
 				while(true)
 				{
 					String input = in.readLine();
-					if (input == null || input.equals("."))
-					{
-						break;
-					}
-					else if (input == ":users")
-					{
-						for (int item : user)
-						{
-							out.println("Client " + item);
-						}
-					}
-					else
-					{
-						out.println(input.toUpperCase());
-					}
+                    for (PrintWriter writer : writers) 
+                    {
+                        writer.println(socket + " > " + input);
+                    }
 				}
 			}
 			catch (IOException e)
 			{
-				System.out.println("Error Handling challenger #" + clientNumber + ": " + e);
+				System.out.println("Error Handling challenger " + username + ": " + e);
 			}
 			finally
 			{
