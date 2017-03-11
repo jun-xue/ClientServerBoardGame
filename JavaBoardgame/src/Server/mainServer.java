@@ -60,15 +60,25 @@ public class mainServer
 				while(true)
 				{
 					String input = in.readLine();
+					System.out.println(input);
+					
                     for (PrintWriter writer : writers) 
                     {
-                        writer.println(socket + " > " + input);
+                    	System.out.println(writer.toString());
+                        writer.println(socket + " > " + input + "\n");
+                        writer.flush();
                     }
 				}
 			}
 			catch (IOException e)
 			{
 				System.out.println("Error Handling challenger " + username + ": " + e);
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				writers.remove(out);
 			}
 			finally
 			{
@@ -80,6 +90,7 @@ public class mainServer
 				{
 					System.out.println("The socket seems to be pretty ducked...");
 				}
+				writers.remove(out);
 			}
 		}
 	}

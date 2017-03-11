@@ -16,7 +16,7 @@ public class ClientUI
 	Socket socket;
 	JFrame frame = new JFrame("Client");
 	
-	JTextArea message = new JTextArea(8, 60);
+	JTextArea message = new JTextArea(8, 120);
 	JTextField data = new JTextField(40);
 	
 	BufferedReader in;
@@ -25,7 +25,7 @@ public class ClientUI
 	public ClientUI()
 	{
         frame.getContentPane().add(data, "South");
-        frame.getContentPane().add(new JScrollPane(message), "Center");
+        frame.getContentPane().add(message, "North");
         
         frame.setTitle("Challenger Client");
         frame.setSize(800, 900);
@@ -53,12 +53,19 @@ public class ClientUI
 		
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
-        
+        String line;
+        line = in.readLine();
+        System.out.println(line);
+        line = in.readLine();
+        System.out.println(line);
+        line = in.readLine();
+        System.out.println(line);
         while (in.ready()) 
         {
-        	String line = in.readLine();
-        	message.append(line);
-            
+	        line = in.readLine();
+	        System.out.println(line);
+	        message.append(line);
+
         }
 	}
 }

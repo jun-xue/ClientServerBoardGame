@@ -69,15 +69,16 @@ public class LoginDialogUI extends JDialog
         });
 
         loginButton.addActionListener(new ActionListener() {
-            @Override
+            @SuppressWarnings("unused")
+			@Override
             public void actionPerformed(ActionEvent e) 
             {
             	// Checking to see if the socket exists
                 try 
                 {
                 	statusLabel.setText("Connecting to the server!");
-					boolean test = hostAvailabilityCheck(serverIPText.getText(), 42069);
-					if (test == true)
+					//boolean test = hostAvailabilityCheck(serverIPText.getText(), 42069);
+					if (true)
 					{
 		                statusLabel.setText("Connected!");
 		                serverIP = serverIPText.getText();
