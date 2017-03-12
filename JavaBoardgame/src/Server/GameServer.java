@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class GameServer extends Thread
@@ -33,27 +34,53 @@ public class GameServer extends Thread
 	
 	public void run()
 	{
+		System.out.println("Server Started");
 		while (running)
 		{
-			
+			try 
+			{
+				ServerObject incoming = (ServerObject)ois.readObject();
+				ServerObject outgoing;
+			} 
+			catch (ClassNotFoundException e) 
+			{
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
+			{
+				running = false;
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public static void main(String[] args)
 	{
-
+		ServerSocket server = null;
+		try
+		{
+			server = new ServerSocket(42069);
+		}
+		catch(IOException ioe)
+		{
+		}
+		while (true)
+		{
+			try 
+			{
+				Socket connection = server.accept();
+				GameServer thread = new GameServer(connection);
+				thread.start();
+				System.out.println("Server Started");
+				
+				
+				
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
