@@ -6,15 +6,29 @@ public class ServerObject implements Serializable
 {
 	private static final long serialVersionUID = -6843436851432057223L;
 	
-	private Object message;
+	private String header;
+	private Object payload;
+	private String sender;
 
-	public ServerObject(Object inMessage)
+	public ServerObject(String header, String sender, Object payload)
 	{
-		message = inMessage;
+		this.header = header;
+		this.payload = payload;
+		this.sender = sender;
 	}
 	
-	public Object getMessage()
+	public Object getPayload()
 	{
-		return message;
+		return payload;
+	}
+	
+	public String getHeader()
+	{
+		return header;
+	}
+	
+	public String getSender()
+	{
+		return sender;
 	}
 }

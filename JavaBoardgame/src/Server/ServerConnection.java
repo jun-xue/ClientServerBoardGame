@@ -1,76 +1,74 @@
 package Server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ServerConnection extends Thread {
+public class ServerConnection extends Thread 
+{
 
-	
 	Socket socket;
 	Server server;
-	DataInputStream din;
-	DataOutputStream dout;
+	ObjectInputStream din2;
+	ObjectOutputStream dout2;
 	boolean shouldRun = true;
 	
-	public ServerConnection (Socket socket, Server server){
-		
+	public ServerConnection (Socket socket, Server server)
+	{
 		super("ServerConnectionThread");
 		this.socket = socket;
 		this.server = server;
 	}
 	
-	public void sendStringToClient(String text){
-		try {
-			dout.writeUTF(text);
-			dout.flush();
-		} catch (IOException e) {
+	public void sendStringToClient(Object packet)
+	{
+		try 
+		{
+			dout2.writeObject(packet);
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}
 	
-	public void sendStringToAllClients(String text){
-		
-		for (int index = 0; index < server.connections.size(); index++){
+	public void sendStringToAllClients(Object packet)
+	{
+		for (int index = 0; index < server.connections.size(); index++)
+		{
 			ServerConnection sc = server.connections.get(index);
-			sc.sendStringToClient(text);
+			sc.sendStringToClient(packet);
 		}
-
 	}
 	
-	public void run(){
-		try {
+	public void run()
+	{
+		try 
+		{
+			din2 = new ObjectInputStream(socket.getInputStream());
+			dout2 = new ObjectOutputStream(socket.getOutputStream());
 			
-
-			din = new DataInputStream(socket.getInputStream());
-			dout = new DataOutputStream(socket.getOutputStream());
-			
-			while(shouldRun){
-				while (din.available() == 0){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					
+			while(shouldRun)
+			{
+				ServerObject packetIn = (ServerObject)din2.readObject();
+				if (packetIn.getHeader().equals("MESSAGE"))
+				{
+					sendStringToAllClients(packetIn);
 				}
-				
-				String textIn = din.readUTF();
-				sendStringToAllClients(textIn);
-				
 			}
-			
-			
-			din.close();
-			dout.close();
+
+			din2.close();
+			dout2.close();
 			socket.close();
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (ClassNotFoundException e) 
+		{
 			e.printStackTrace();
 		}
-		
-		
-		
 	}
-	
 }

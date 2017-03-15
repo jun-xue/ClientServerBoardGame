@@ -2,23 +2,25 @@ package Client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import UI.LoginDialogUI;
+import Server.ServerObject;
 
-public class ClientConnection extends Thread {
-
+public class ClientConnection extends Thread 
+{
 	Socket s;
 	String u;
-	DataInputStream din;
-	DataOutputStream dout;
+	ObjectInputStream din2;
+	ObjectOutputStream dout2;
 	boolean shouldRun = true;
 
 	JFrame frame = new JFrame("Client");
@@ -30,6 +32,18 @@ public class ClientConnection extends Thread {
 	{
 		s = socket;
 		u = username;
+		try 
+		{
+			OutputStream os = socket.getOutputStream();
+			InputStream is = socket.getInputStream();
+		
+			dout2 = new ObjectOutputStream(os);
+			din2 = new ObjectInputStream(is);
+		} 
+		catch (IOException e1) 
+		{
+			e1.printStackTrace();
+		}
 		
         frame.getContentPane().add(data, "South");
         frame.getContentPane().add(message, "North");
@@ -45,71 +59,66 @@ public class ClientConnection extends Thread {
         {
             public void actionPerformed(ActionEvent e) 
             {
-                sendStringToServer(data.getText());
+            	ServerObject outMessege = new ServerObject("MESSAGE", username, data.getText());
+                sendPacketToServer(outMessege);
                 data.setText("");
             }
         });
 	}
 
-
-
-	public void sendStringToServer(String text){
-		try {
-			dout.writeUTF(text);
-			dout.flush();
-		} catch (IOException e) {
+	public void sendPacketToServer(ServerObject packet)
+	{
+		try 
+		{
+			dout2.writeObject(packet);
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 			close();
 		}
-		
-		
 	}
 
-
-
-
-
-	public void run(){
-		//text input/output communication streams
-		try {
-			din = new DataInputStream(s.getInputStream());
-			dout = new DataOutputStream(s.getOutputStream());
-			
-			while(shouldRun){
-				try {
-					while(din.available() == 0){
-						try {
-							Thread.sleep(1);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-
-					//finally when something does show up, prints to console
-					String reply = din.readUTF();
-					message.append(u + " > " + reply + "\n");
-				} catch (IOException e) {
-					e.printStackTrace();
-					close();
-				}
+	public void run()
+	{
+		while(shouldRun)
+		{
+			try 
+			{
+				ServerObject incoming = (ServerObject) din2.readObject();
+				
+				System.out.println(incoming.getHeader());
+				System.out.println(incoming.getPayload());
+				
+				if (incoming.getHeader().equals("MESSAGE"))
+				{
+					System.out.println("Here?");
+					message.append(incoming.getSender() + " > " + incoming.getPayload() + "\n");
+				}	
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+				close();
+			} 
+			catch (ClassNotFoundException e) 
+			{
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			close();
-		}
-		
-		
+		}		
 	}
 	
-	public void close(){
-		//close all the things
-		try {
-			din.close();
-			dout.close();
+	public void close()
+	{
+		try 
+		{
+			din2.close();
+			dout2.close();
 			s.close();
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}
-
 }

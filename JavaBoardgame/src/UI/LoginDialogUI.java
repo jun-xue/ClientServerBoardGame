@@ -92,19 +92,34 @@ public class LoginDialogUI extends JDialog
 	                	statusLabel.setText("Could not connect to the server!");
 	                	return;
 					}
-				} finally
+				} 
+                finally
                 {
 					
 				} 
                 
             }
         });
-        registerButton.addActionListener(new ActionListener() {
+        
+        registerButton.addActionListener(new ActionListener() 
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
-               
+            public void actionPerformed(ActionEvent e) 
+            {
+            	try 
+            	{
+					Socket s = new Socket(serverIPText.getText(), 42069);
+					
+					
+				} catch (UnknownHostException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+            	
             }
         });
+        
         setVisible(true);
     }
     
