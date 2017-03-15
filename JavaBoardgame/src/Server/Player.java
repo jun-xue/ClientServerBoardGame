@@ -109,7 +109,7 @@ public class Player implements Serializable, Cloneable
 	public static boolean checkPassword(Player player)
 	{
 		Player p = accounts.get(player.getUsername());
-		if (p == null)
+		if (!(p.password.equals(player.password)))
 		{
 			return false;
 		}

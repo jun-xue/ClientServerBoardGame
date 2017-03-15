@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class ServerConnection extends Thread 
 {
@@ -90,18 +89,43 @@ public class ServerConnection extends Thread
 					{
 						ServerObject outPacket = new ServerObject("INVALID", null, null);
 						sendStringToClient(outPacket);
-						System.out.println("Account invalid");
 					}
 				}
+				
 				else if (packetIn.getHeader().equals("LEAVE"))
 				{
 					server.connections.remove(this);
 					break;
 				}
-				
-				for (ServerConnection s : server.connections)
+				else if (packetIn.getHeader().equals("CHALLENGE"))
 				{
-					System.out.println(s.account.getUsername());
+					String temp = ((String) packetIn.getPayload());
+					String[] temp2 = temp.split(" ");
+					ServerConnection challenged = null;
+					//temp2[1] = challenged name, temp2[2] = game type
+					
+					for (ServerConnection sc : server.connections)
+					{
+						if (sc.account.username.equals(temp2[1]))
+						{
+							challenged = sc;
+						}
+					}
+					if (challenged != null)
+					{
+						server.challenges.put(challenged, temp2[2]);
+						ServerObject outPacket = new ServerObject("MESSAGE", "Server", "You have been challenged by " + packetIn.getSender() + " to a game of " + temp2[2] + ". type '/accept' to accept the duel!\n");
+						challenged.dout2.writeObject(outPacket);
+					}
+				}
+				else if (packetIn.getHeader().equals("ACCEPT"))
+				{
+					if (server.challenges.contains(this))
+					{
+						// START NEW SERVER WITH GAME MODE IN IT
+						// GameServer gs = new GameServer(this, Somehow get the person who challenged, server.challenges.get(this));
+						server.challenges.remove(this);
+					}
 				}
 			}
 
