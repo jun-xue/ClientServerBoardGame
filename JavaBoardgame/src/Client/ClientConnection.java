@@ -113,7 +113,7 @@ public class ClientConnection extends Thread
         frame.getContentPane().add(data, "South");
         frame.getContentPane().add(message, "North");
         
-        frame.setTitle("Challenger Client");
+        frame.setTitle("Challenger Client: " + user);
         frame.setSize(800, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
