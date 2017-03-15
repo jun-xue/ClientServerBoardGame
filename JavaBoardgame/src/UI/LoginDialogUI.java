@@ -23,10 +23,10 @@ public class LoginDialogUI extends JDialog
     private final JButton 			registerButton 	= new JButton("Register");
 
     private final JLabel 			statusLabel 	= new JLabel("God fuck me please");
-    String serverIP;
+    public String serverIP;
     int serverPort;
-    String username;
-    String password;
+    public String username;
+    public String password;
 
     public LoginDialogUI(final JFrame parent, boolean modal) 
     {
@@ -108,10 +108,14 @@ public class LoginDialogUI extends JDialog
         setVisible(true);
     }
     
-    public static boolean hostAvailabilityCheck(String SERVER_ADDRESS, int TCP_SERVER_PORT) { 
-        try (Socket s = new Socket(SERVER_ADDRESS, TCP_SERVER_PORT)) {
+    public static boolean hostAvailabilityCheck(String SERVER_ADDRESS, int TCP_SERVER_PORT) 
+    { 
+        try (Socket s = new Socket(SERVER_ADDRESS, TCP_SERVER_PORT)) 
+        {
             return true;
-        } catch (IOException ex) {
+        } 
+        catch (IOException ex) 
+        {
             /* ignore */
         }
         return false;
