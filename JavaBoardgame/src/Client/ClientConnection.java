@@ -31,6 +31,7 @@ public class ClientConnection extends Thread
 	
 	JTextArea message = new JTextArea(8, 120);
 	JTextField data = new JTextField(40);
+	
 
 	public ClientConnection(Socket socket, Client client) throws ClassNotFoundException, IOException
 	{
@@ -113,6 +114,7 @@ public class ClientConnection extends Thread
         frame.getContentPane().add(data, "South");
         frame.getContentPane().add(message, "North");
         
+        message.setEditable(false);
         frame.setTitle("Challenger Client");
         frame.setSize(800, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

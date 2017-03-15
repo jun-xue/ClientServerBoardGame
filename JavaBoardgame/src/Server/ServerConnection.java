@@ -98,6 +98,11 @@ public class ServerConnection extends Thread
 					server.connections.remove(this);
 					break;
 				}
+				
+				for (ServerConnection s : server.connections)
+				{
+					System.out.println(s.account.getUsername());
+				}
 			}
 
 			din2.close();
@@ -106,6 +111,7 @@ public class ServerConnection extends Thread
 		} 
 		catch (IOException e) 
 		{
+			server.connections.remove(this);
 			e.printStackTrace();
 		} 
 		catch (ClassNotFoundException e) 
