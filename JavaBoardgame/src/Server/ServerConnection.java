@@ -4,15 +4,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ServerConnection extends Thread 
 {
-
 	Socket socket;
 	Server server;
 	ObjectInputStream din2;
 	ObjectOutputStream dout2;
 	boolean shouldRun = true;
+	private Player account;
 	
 	public ServerConnection (Socket socket, Server server)
 	{
@@ -52,9 +53,50 @@ public class ServerConnection extends Thread
 			while(shouldRun)
 			{
 				ServerObject packetIn = (ServerObject)din2.readObject();
+				
 				if (packetIn.getHeader().equals("MESSAGE"))
 				{
 					sendStringToAllClients(packetIn);
+				}
+				
+				else if (packetIn.getHeader().equals("REGISTER"))
+				{
+					account = (Player)packetIn.getPayload();
+					if (Player.checkForAccount(account) == true)
+					{
+						ServerObject outPacket = new ServerObject("INVALID", null, null);
+						sendStringToClient(outPacket);
+						System.out.println("Account invalid");
+					}
+					else
+					{
+						Player.putNewAccount(account);
+						Player.saveAccounts();
+						ServerObject outPacket = new ServerObject("VALID", null, null);
+						sendStringToClient(outPacket);
+						System.out.println("Account added");
+					}
+				}
+				else if (packetIn.getHeader().equals("LOGIN"))
+				{
+					account = (Player)packetIn.getPayload();
+					if (Player.checkPassword(account) == true)
+					{
+						ServerObject outPacket = new ServerObject("VALID", null, null);
+						sendStringToClient(outPacket);
+						
+					}
+					else
+					{
+						ServerObject outPacket = new ServerObject("INVALID", null, null);
+						sendStringToClient(outPacket);
+						System.out.println("Account invalid");
+					}
+				}
+				else if (packetIn.getHeader().equals("LEAVE"))
+				{
+					server.connections.remove(this);
+					break;
 				}
 			}
 

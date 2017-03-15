@@ -13,7 +13,7 @@ import java.util.Hashtable;
 public class Player implements Serializable, Cloneable
 {
 	// Variables //
-	
+	private static final long serialVersionUID = 8090945034118137512L;
 	public String 	username;
 	public String 	password;
 	public int 		wins		= 0;

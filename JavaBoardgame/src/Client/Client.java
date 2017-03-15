@@ -1,7 +1,6 @@
 package Client;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import javax.swing.SwingUtilities;
 
@@ -12,37 +11,24 @@ public class Client
 	ClientConnection cc;
 	private LoginDialogUI loginDialog;
 	
-	public static void main(String[] args)
+	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException
 	{
 		new Client();
 	}
 	
 	
-	public Client()
+	public Client() throws UnknownHostException, IOException, ClassNotFoundException
 	{
-		try 
+		loginDialog = new LoginDialogUI(null, true);
+		cc = new ClientConnection(loginDialog.s, this);
+		SwingUtilities.invokeLater(new Runnable() 
 		{
-			loginDialog = new LoginDialogUI(null, true);
-			Socket s = new Socket(loginDialog.serverIP, 42069);
-        	cc = new ClientConnection(s, this, loginDialog.username, loginDialog.password);
-			SwingUtilities.invokeLater(new Runnable() 
-			{
-	            @Override
-	            public void run() 
-	            {
-	        		cc.start();
-	            }
-	        });
-			
-		} 
-		catch (UnknownHostException e) 
-		{
-			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
+		    @Override
+		    public void run() 
+		    {
+				cc.start();
+		    }
+		});
 	}
 }
 

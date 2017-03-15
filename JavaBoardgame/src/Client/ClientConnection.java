@@ -10,15 +10,19 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import Server.Player;
 import Server.ServerObject;
 
 public class ClientConnection extends Thread 
 {
 	Socket s;
-	String u;
+	String user;
+	String pass;
+	
 	ObjectInputStream din2;
 	ObjectOutputStream dout2;
 	boolean shouldRun = true;
@@ -28,10 +32,9 @@ public class ClientConnection extends Thread
 	JTextArea message = new JTextArea(8, 120);
 	JTextField data = new JTextField(40);
 
-	public ClientConnection(Socket socket, Client client, String username, String password)
+	public ClientConnection(Socket socket, Client client) throws ClassNotFoundException, IOException
 	{
 		s = socket;
-		u = username;
 		try 
 		{
 			OutputStream os = socket.getOutputStream();
@@ -44,6 +47,68 @@ public class ClientConnection extends Thread
 		{
 			e1.printStackTrace();
 		}
+		
+		Object[] options = {"Login", "New Account"};
+		int sel = JOptionPane.showOptionDialog(null, "Select an option:\n" +
+				"(if the prvious login fails, this will pop up again)", 
+				"Challenger Log In", JOptionPane.DEFAULT_OPTION,	
+				JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+		
+		if (sel == 0)
+		{
+			while(true)
+			{
+				String u = JOptionPane.showInputDialog(frame, "Enter your username:");
+				String p = JOptionPane.showInputDialog(frame, "Enter your password:");
+				
+				// need to make it crash correctly if improper stuff is typed in
+				
+				Player temp = new Player(u,p);
+	        	ServerObject outMessage = new ServerObject("LOGIN", u, temp);
+	        	sendPacketToServer(outMessage);
+	        	
+				ServerObject incoming = (ServerObject) din2.readObject();
+				
+				if (incoming.getHeader().equals("VALID"))
+				{
+					user = u;
+					break;
+				}
+				else
+				{
+					continue;
+				}
+	        	
+			}
+		}
+		else if (sel == 1)
+		{
+			while(true)
+			{
+				String u = JOptionPane.showInputDialog(frame, "Enter your username:");
+				String p = JOptionPane.showInputDialog(frame, "Enter your password:");
+
+				// need to make it crash correctly if improper stuff is typed in
+				
+				Player temp = new Player(u,p);
+	        	ServerObject outMessage = new ServerObject("REGISTER", u, temp);
+	        	sendPacketToServer(outMessage);
+	        	
+				ServerObject incoming = (ServerObject) din2.readObject();
+				
+				if (incoming.getHeader().equals("VALID"))
+				{
+					user = u;
+					break;
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
+		
+		
 		
         frame.getContentPane().add(data, "South");
         frame.getContentPane().add(message, "North");
@@ -59,7 +124,15 @@ public class ClientConnection extends Thread
         {
             public void actionPerformed(ActionEvent e) 
             {
-            	ServerObject outMessege = new ServerObject("MESSAGE", username, data.getText());
+            	if (data.getText().equals("quit"))
+            	{
+                	ServerObject outMessage = new ServerObject("LEAVE", user, data.getText());
+                	sendPacketToServer(outMessage);
+                	close();
+                	System.exit(0);
+            	}
+            	
+            	ServerObject outMessege = new ServerObject("MESSAGE", user, data.getText());
                 sendPacketToServer(outMessege);
                 data.setText("");
             }
@@ -87,12 +160,8 @@ public class ClientConnection extends Thread
 			{
 				ServerObject incoming = (ServerObject) din2.readObject();
 				
-				System.out.println(incoming.getHeader());
-				System.out.println(incoming.getPayload());
-				
 				if (incoming.getHeader().equals("MESSAGE"))
 				{
-					System.out.println("Here?");
 					message.append(incoming.getSender() + " > " + incoming.getPayload() + "\n");
 				}	
 			} 
