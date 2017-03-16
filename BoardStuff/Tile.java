@@ -6,7 +6,7 @@ import java.awt.*;
  * @version 0.1.0, 3/9/2017
  */
 class Tile extends JPanel {
-    Player owned = null; // ??? Need to maintain Tile ownership; PlayerX or null...
+    private String owned; // ??? Need to maintain Tile ownership; PlayerX or null...
     private int row, column;
 
     Tile(int row, int column)   {
@@ -15,7 +15,15 @@ class Tile extends JPanel {
         this.column = column;
     }
 
-    void addPiece(ImageIcon gamePiece)   {
+    public String getOwned() {
+		return owned;
+	}
+
+	public void setOwned(String owned) {
+		this.owned = owned;
+	}
+
+	void addPiece(ImageIcon gamePiece)   {
         JLabel imageHolder = new JLabel(gamePiece);
         add(imageHolder);
         imageHolder.setVisible(true);
