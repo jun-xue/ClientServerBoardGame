@@ -33,9 +33,6 @@ public class LoginDialogUI extends JDialog
 	ObjectOutputStream oos;
 	ObjectInputStream ois;
     public String serverIP;
-    public String username;
-    public String password;
-    Player account;
 
     public LoginDialogUI(final JFrame parent, boolean modal) 
     {
@@ -67,7 +64,6 @@ public class LoginDialogUI extends JDialog
         });
 
         loginButton.addActionListener(new ActionListener() {
-            @SuppressWarnings("unused")
 			@Override
             public void actionPerformed(ActionEvent e) 
             {

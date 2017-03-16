@@ -11,6 +11,8 @@ public class Server
 	ServerSocket ss;
 	ArrayList<ServerConnection> connections = new ArrayList<ServerConnection>();
 	Hashtable<String, String> challenges = new Hashtable<String, String>();
+	String[] gamesOnServer = {"TicTacToe", "Chess", "Checkers"};
+	
 	boolean shouldRun = true;
 	
 	public static void main(String[] args)
