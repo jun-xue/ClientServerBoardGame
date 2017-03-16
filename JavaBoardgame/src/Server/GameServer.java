@@ -17,7 +17,7 @@ public class GameServer
 	GameServer (Player player1, Player player2, 
 				ServerConnection connection1, 
 				ServerConnection connection2, 
-				String gameType)
+				int gameType)
 	{
 		
 		System.out.println(gameType + " game started!");
@@ -33,11 +33,11 @@ public class GameServer
 		
 
 		//finish later
-		if(gameType.equals("TicTacToe"))
+		if(gameType == 0) // ttt
 			this.gameBoard = null;
-		else if (gameType.equals("Checkers"))
+		else if (gameType == 1) // chess
 			this.gameBoard = null;
-		else if (gameType.equals("Chess"))
+		else if (gameType == 2) // checkers
 			this.gameBoard = null;
 		
 	}

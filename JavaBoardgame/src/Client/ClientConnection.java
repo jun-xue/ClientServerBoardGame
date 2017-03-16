@@ -9,6 +9,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,6 +34,8 @@ public class ClientConnection extends Thread
 	String pass;
 	
 	ArrayList<String> currentConnected = new ArrayList<String>();
+	Hashtable<String, String> challenges = new Hashtable<String, String>();
+	
 	ObjectInputStream din2;
 	ObjectOutputStream dout2;
 	boolean shouldRun = true;
@@ -39,7 +43,11 @@ public class ClientConnection extends Thread
 	JFrame frame = new JFrame("Client");
 	
 	JMenuBar menuBar = new JMenuBar();
-	JMenu challenge = new JMenu("Challenge");;
+	
+	JMenu challenge = new JMenu("Challenge:");
+	JMenu accept = new JMenu("Accept Challenge:");
+	JMenu decline = new JMenu("Decline Challenge:");
+
 	JTextArea message = new JTextArea(8, 120);
 	JTextField data = new JTextField(40);
 	//MAKE A SCROLL WINDOW FOR MESSAGE.
@@ -120,6 +128,8 @@ public class ClientConnection extends Thread
 			}
 		}
 		menuBar.add(challenge);
+		menuBar.add(accept);
+		menuBar.add(decline);
 		
         frame.getContentPane().add(data, "South");
         frame.getContentPane().add(message, "Center");
@@ -145,16 +155,6 @@ public class ClientConnection extends Thread
                 	close();
                 	System.exit(0);
             	}
-            	else if (data.getText().startsWith("/challenge"))
-            	{
-            		ServerObject outMessage = new ServerObject("CHALLENGE", user, data.getText());
-                	sendPacketToServer(outMessage);
-            	}
-            	else if (data.getText().equals("/accept"))
-            	{
-            		ServerObject outMessage = new ServerObject("ACCEPT", user, null);
-                	sendPacketToServer(outMessage);
-            	}
             	else
             	{
 	            	ServerObject outMessege = new ServerObject("MESSAGE", user, data.getText());
@@ -163,6 +163,7 @@ public class ClientConnection extends Thread
 	            data.setText("");
             }
         });
+        
         challenge.addMenuListener(new MenuListener() {
 
             @Override
@@ -190,9 +191,6 @@ public class ClientConnection extends Thread
                 					"Game Choice", JOptionPane.DEFAULT_OPTION,	
                 					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 			
-                			System.out.println(sel);
-                			System.out.println(c1);
-                			System.out.println(user);
                             ServerObject outMessege = new ServerObject("CHALLENGE", user, c1, sel);
                             sendPacketToServer(outMessege);
                 		}
@@ -204,6 +202,99 @@ public class ClientConnection extends Thread
             public void menuDeselected(MenuEvent e) 
             {
                 challenge.removeAll();
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+
+            }
+        });
+        
+        accept.addMenuListener(new MenuListener() {
+
+            @Override
+            public void menuSelected(MenuEvent e) 
+            {
+                ServerObject outMessege = new ServerObject("CHALLENGES", user, null);
+                sendPacketToServer(outMessege);
+                
+                Set<String> keys = challenges.keySet();
+                for (String key : keys)
+                {
+                	System.out.println(key + challenges.get(key));
+                	if (!challenges.get(key).equals(user))
+                	{
+                		continue;
+                	}
+                	JMenuItem temp = new JMenuItem(key.toString());
+                	accept.add(temp);
+                	temp.addActionListener(new ActionListener()
+                	{
+                		String c1 = temp.getText();
+                		@Override
+                		public void actionPerformed(ActionEvent e)
+                		{
+                			
+                			Object[] options = {"Tic Tac Toe", "Chess", "Checkers"};
+                			int sel = JOptionPane.showOptionDialog(null, "What game are you accepting:\n", 
+                					"Game Choice", JOptionPane.DEFAULT_OPTION,	
+                					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                			
+                            ServerObject outMessege = new ServerObject("ACCEPT", user, c1, sel);
+                            sendPacketToServer(outMessege);
+                		}
+                	});
+                }
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) 
+            {
+                accept.removeAll();
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+
+            }
+        });
+        
+        decline.addMenuListener(new MenuListener() {
+
+            @Override
+            public void menuSelected(MenuEvent e) 
+            {
+                ServerObject outMessege = new ServerObject("CHALLENGES", user, null);
+                sendPacketToServer(outMessege);
+                
+                Set<String> keys = challenges.keySet();
+                for (String key : keys)
+                {
+                	System.out.println(key + challenges.get(key));
+                	if (!challenges.get(key).equals(user))
+                	{
+                		continue;
+                	}
+                	JMenuItem temp = new JMenuItem(key.toString());
+                	decline.add(temp);
+                	temp.addActionListener(new ActionListener()
+                	{
+                		String c1 = temp.getText();
+                		@Override
+                		public void actionPerformed(ActionEvent e)
+                		{
+                			challenges.remove(c1);
+                            ServerObject outMessege = new ServerObject("DECLINE", c1, user, null);
+                            sendPacketToServer(outMessege);
+                		}
+                	});
+                }
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) 
+            {
+                decline.removeAll();
             }
 
             @Override
@@ -235,22 +326,23 @@ public class ClientConnection extends Thread
 		{
 			try 
 			{
-
-                
 				ServerObject incoming = (ServerObject) din2.readObject();
 				
 				if (incoming.getHeader().equals("MESSAGE"))
 				{
 					message.append(incoming.getSender() + " > " + incoming.getPayload() + "\n");
-
 				}	
 				else if (incoming.getHeader().equals("SERVER ANNOUNCEMENT"))
 				{	
 					message.append(incoming.getPayload() + "\n");
 				}
-				if (incoming.getHeader().equals("USERS"))
+				else if (incoming.getHeader().equals("USERS"))
 				{
 					currentConnected = (ArrayList<String>)incoming.getPayload();
+				}
+				else if (incoming.getHeader().equals("CHALLENGES"))
+				{
+					challenges = (Hashtable<String, String>)incoming.getPayload();
 				}
 			} 
 			catch (IOException e) 

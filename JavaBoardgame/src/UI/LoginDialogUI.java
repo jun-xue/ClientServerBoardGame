@@ -28,7 +28,7 @@ public class LoginDialogUI extends JDialog
 
     private final JButton 			loginButton 	= new JButton("Login");
 
-    private final JLabel 			statusLabel 	= new JLabel("God fuck me please");
+    private final JLabel 			statusLabel 	= new JLabel("");
     public Socket s;
 	ObjectOutputStream oos;
 	ObjectInputStream ois;
