@@ -26,8 +26,6 @@ class Tile extends JPanel {
 	void addPiece(ImageIcon gamePiece)   {
         JLabel imageHolder = new JLabel(gamePiece);
         add(imageHolder);
-        imageHolder.setVisible(true);
-        imageHolder.repaint();
     }
 
     int getRow() {

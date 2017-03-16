@@ -11,7 +11,7 @@ public class TicTacToeFactory implements AbstractGameFactory{
     @Override
     public GameBoard createGameBoard() {
         GameBoard tttBoard = new GameBoard(450, 450, 3, 3,
-                new Color(35,180,170), new Color(30,140,135), "Tic Tac Toe");
+                new Color(30,140,135), new Color(30,140,135), "Tic Tac Toe");
         tttBoard.addTicTacToeBorders();
         return tttBoard;
     }
@@ -19,23 +19,15 @@ public class TicTacToeFactory implements AbstractGameFactory{
     @Override
     public ArrayList<ImageIcon> loadImages() {
 
-        ImageIcon lightX = new ImageIcon(//new ImageIcon(
-                "Images\\LightX.png");
-               // .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
-        ImageIcon darkX = new ImageIcon(//new ImageIcon(
-                "Images\\DarkX.png");
-        // .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
-        ImageIcon lightO = new ImageIcon(//new ImageIcon(
-                "Images\\LightO.png");
-        // .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
-        ImageIcon darkO = new ImageIcon(//new ImageIcon(
-                "Images\\darkO.png");
-        // .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
+//        ImageIcon lightX = new ImageIcon("C:\\Users\\ACKD151\\IdeaProjects\\GitHub\\ClientServerBoardGame\\BoardStuff\\Images\\LightX.png");
+//        ImageIcon lightO = new ImageIcon("C:\\Users\\ACKD151\\IdeaProjects\\GitHub\\ClientServerBoardGame\\BoardStuff\\Images\\LightO.png");
+        ImageIcon darkO = new ImageIcon("C:\\Users\\ACKD151\\IdeaProjects\\GitHub\\ClientServerBoardGame\\BoardStuff\\Images\\DarkO.png");
+        ImageIcon darkX = new ImageIcon("C:\\Users\\ACKD151\\IdeaProjects\\GitHub\\ClientServerBoardGame\\BoardStuff\\Images\\DarkX.png");
 
         ArrayList<ImageIcon> images = new ArrayList<>(4);
-        images.add(lightX);
+//        images.add(lightX);
+//        images.add(lightO);
         images.add(darkX);
-        images.add(lightO);
         images.add(darkO);
 
         return images;

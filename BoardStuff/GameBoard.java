@@ -41,7 +41,7 @@ public class GameBoard extends JFrame implements MouseListener{
         JFrame board = new JFrame();
         board.setSize(width + 20, height + 20);
         board.setTitle(gameTitle);
-        board.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        board.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //Outer JPanel or 'Board' that will contain the board Tiles.
         JPanel gameBoard = new JPanel(new GridLayout(numRows, numColumns));
