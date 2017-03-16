@@ -31,6 +31,7 @@ public class ClientConnection extends Thread
 	
 	JTextArea message = new JTextArea(8, 120);
 	JTextField data = new JTextField(40);
+	//MAKE A SCROLL WINDOW FOR MESSAGE.
 
 	public ClientConnection(Socket socket, Client client) throws ClassNotFoundException, IOException
 	{
@@ -113,7 +114,12 @@ public class ClientConnection extends Thread
         frame.getContentPane().add(data, "South");
         frame.getContentPane().add(message, "North");
         
+<<<<<<< HEAD
         frame.setTitle("Challenger Client: " + user);
+=======
+        message.setEditable(false);
+        frame.setTitle("Challenger Client");
+>>>>>>> origin/master
         frame.setSize(800, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -131,10 +137,22 @@ public class ClientConnection extends Thread
                 	close();
                 	System.exit(0);
             	}
-            	
-            	ServerObject outMessege = new ServerObject("MESSAGE", user, data.getText());
-                sendPacketToServer(outMessege);
-                data.setText("");
+            	else if (data.getText().startsWith("/challenge"))
+            	{
+            		ServerObject outMessage = new ServerObject("CHALLENGE", user, data.getText());
+                	sendPacketToServer(outMessage);
+            	}
+            	else if (data.getText().equals("/accept"))
+            	{
+            		ServerObject outMessage = new ServerObject("ACCEPT", user, null);
+                	sendPacketToServer(outMessage);
+            	}
+            	else
+            	{
+	            	ServerObject outMessege = new ServerObject("MESSAGE", user, data.getText());
+	                sendPacketToServer(outMessege);
+            	}
+	            data.setText("");
             }
         });
 	}

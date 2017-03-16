@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class Server 
 {
 	ServerSocket ss;
 	ArrayList<ServerConnection> connections = new ArrayList<ServerConnection>();
+	Hashtable<ServerConnection, String> challenges = new Hashtable<ServerConnection, String>();
 	boolean shouldRun = true;
 	
 	public static void main(String[] args)
