@@ -23,7 +23,7 @@ public class GameClient extends Thread
 	{
 		s = socket;
 		
-		gameWindow.setBounds(10, 20, 800, 800);
+		gameWindow.setBounds(10, 10, 800, 800);
 		frame.getContentPane().add(status, "North");
 		frame.getContentPane().add(gameWindow, "Center");
 		frame.getContentPane().add(quit, "South");
