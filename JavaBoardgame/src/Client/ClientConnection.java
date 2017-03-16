@@ -242,19 +242,15 @@ public class ClientConnection extends Thread
 				if (incoming.getHeader().equals("MESSAGE"))
 				{
 					message.append(incoming.getSender() + " > " + incoming.getPayload() + "\n");
-<<<<<<< HEAD
-					
+
 				}	
 				else if (incoming.getHeader().equals("SERVER ANNOUNCEMENT"))
 				{	
 					message.append(incoming.getPayload() + "\n");
-=======
 				}
-				
 				if (incoming.getHeader().equals("USERS"))
 				{
 					currentConnected = (ArrayList<String>)incoming.getPayload();
->>>>>>> origin/master
 				}
 			} 
 			catch (IOException e) 
