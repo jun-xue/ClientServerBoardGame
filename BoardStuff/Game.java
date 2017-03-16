@@ -23,7 +23,6 @@ public abstract class Game extends JFrame implements MouseListener  {
                 t.addMouseListener(this);
             }
         }
-//        board.tileTrial();
     }
 
     protected abstract void run();
