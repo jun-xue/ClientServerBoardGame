@@ -2,7 +2,8 @@ package Server;
 
 import java.net.Socket;
 
-public class GameServer {
+public class GameServer 
+{
 	
 	Player player1;
 	Player player2;
@@ -19,6 +20,10 @@ public class GameServer {
 				String gameType)
 	{
 		
+		System.out.println(gameType + " game started!");
+		System.out.println(player1.username + " player 1");
+		System.out.println(player2.username + " player 2");
+		
 		
 		this.player1 = player1;
 		this.player2 = player2;
@@ -28,7 +33,7 @@ public class GameServer {
 		
 
 		//finish later
-		if(gameType.equals("TTT"))
+		if(gameType.equals("TicTacToe"))
 			this.gameBoard = null;
 		else if (gameType.equals("Checkers"))
 			this.gameBoard = null;

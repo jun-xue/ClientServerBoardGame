@@ -12,7 +12,7 @@ public class ServerConnection extends Thread
 	ObjectInputStream din2;
 	ObjectOutputStream dout2;
 	boolean shouldRun = true;
-	private Player account;
+	public Player account;
 	
 	public ServerConnection (Socket socket, Server server)
 	{
@@ -21,7 +21,7 @@ public class ServerConnection extends Thread
 		this.server = server;
 	}
 	
-	public void sendStringToClient(Object packet)
+	public void sendPacketToClient(Object packet)
 	{
 		try 
 		{
@@ -33,12 +33,12 @@ public class ServerConnection extends Thread
 		}
 	}
 	
-	public void sendStringToAllClients(Object packet)
+	public void sendPacketToAllClients(Object packet)
 	{
 		for (int index = 0; index < server.connections.size(); index++)
 		{
 			ServerConnection sc = server.connections.get(index);
-			sc.sendStringToClient(packet);
+			sc.sendPacketToClient(packet);
 		}
 	}
 	
@@ -53,6 +53,10 @@ public class ServerConnection extends Thread
 			{
 				ServerObject packetIn = (ServerObject)din2.readObject();
 				
+				//////////////////////////////////////////
+				//////////      MESSAGES     /////////////
+				//////////////////////////////////////////
+				
 				if (packetIn.getHeader().equals("MESSAGE"))
 				{
 					
@@ -65,15 +69,19 @@ public class ServerConnection extends Thread
 					//if a message in chat starts with the word "challenge" it will check accounts 
 					//to see if who was challenged was valid, if so, players are thrown into a 
 					//GameServer instance together
+					
 					if (textMessageContent.length() > 9 && textMessageContent.substring(0,9).equals("challenge")){	
-						
+						String [] temp = textMessageContent.split(" ");
 						//if player exists,
-						if(Player.checkForAccount(Player.getAccount(textMessageContent.substring(10)))){
+						String name = temp[1];
+						String game = temp[2];
+						
+						if(Player.checkForAccount(Player.getAccount(name))){
 							
-							String challengee = textMessageContent.substring(10);
-							sendStringToAllClients(packetIn.getSender() + "has challenged "+ challengee);
+							String challengee = name;
+							//sendPacketToAllClients(packetIn.getSender() + "has challenged "+ challengee);
 							
-							System.out.println("*sick ass UI comes up where challenger select game*");
+							//System.out.println("*sick ass UI comes up where challenger select game*");
 							
 							//challengee gets an accept or decline choice
 							
@@ -103,20 +111,23 @@ public class ServerConnection extends Thread
 							GameServer Game = new GameServer(Player.getAccount(player1Connection.account.getUsername()),
 												Player.getAccount(player2Connection.account.getUsername()),
 												player1Connection, player2Connection, "TTT");
-							
-							
+	
 						}
 					}
 
 					else{
 						
 						//otherwise, treat message as normal send message in chatroom
-						sendStringToAllClients(packetIn);
+						sendPacketToAllClients(packetIn);
 					}
 					
 					
 	
 				}
+				
+				//////////////////////////////////////////
+				//////////  ACCOUNT SETTINGS /////////////
+				//////////////////////////////////////////
 				
 				else if (packetIn.getHeader().equals("REGISTER"))
 				{
@@ -124,7 +135,7 @@ public class ServerConnection extends Thread
 					if (Player.checkForAccount(account) == true)
 					{
 						ServerObject outPacket = new ServerObject("INVALID", null, null);
-						sendStringToClient(outPacket);
+						sendPacketToClient(outPacket);
 						System.out.println("Account invalid");
 					}
 					else
@@ -132,7 +143,7 @@ public class ServerConnection extends Thread
 						Player.putNewAccount(account);
 						Player.saveAccounts();
 						ServerObject outPacket = new ServerObject("VALID", null, null);
-						sendStringToClient(outPacket);
+						sendPacketToClient(outPacket);
 						System.out.println("Account added");
 					}
 				}
@@ -142,21 +153,31 @@ public class ServerConnection extends Thread
 					if (Player.checkPassword(account) == true)
 					{
 						ServerObject outPacket = new ServerObject("VALID", null, null);
-						sendStringToClient(outPacket);
+						sendPacketToClient(outPacket);
 						
 					}
 					else
 					{
 						ServerObject outPacket = new ServerObject("INVALID", null, null);
-						sendStringToClient(outPacket);
+						sendPacketToClient(outPacket);
 					}
 				}
+				
+				//////////////////////////////////////////
+				//////////       LEAVING     /////////////
+				//////////////////////////////////////////
 				
 				else if (packetIn.getHeader().equals("LEAVE"))
 				{
 					server.connections.remove(this);
 					break;
 				}
+				
+				//////////////////////////////////////////
+				//////////  CHALLENGEING     /////////////
+				//////////////////////////////////////////
+				
+				
 				else if (packetIn.getHeader().equals("CHALLENGE"))
 				{
 					String temp = ((String) packetIn.getPayload());
