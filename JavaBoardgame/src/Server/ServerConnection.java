@@ -62,13 +62,14 @@ public class ServerConnection extends Thread
 					
 					
 					//this is just me trying to not get an error from typecasting a 
-					//ServerObject packetIn to a String. Still needs to be fixed.
+					//ServerObject packetIn to a String.
 					Object payloadToString = packetIn.getPayload();
 					String textMessageContent = payloadToString.toString();
 					
 					//if a message in chat starts with the word "challenge" it will check accounts 
 					//to see if who was challenged was valid, if so, players are thrown into a 
-					//GameServer instance together
+					//GameServer instance together. Messages are split by a space
+					//so an example would be: "challenge player1 checkers"
 					
 					if (textMessageContent.length() > 9 && textMessageContent.substring(0,9).equals("challenge")){	
 						String [] temp = textMessageContent.split(" ");
@@ -76,17 +77,24 @@ public class ServerConnection extends Thread
 						String name = temp[1];
 						String game = temp[2];
 						
-						if(Player.checkForAccount(Player.getAccount(name))){
-							
+						if(Player.checkForAccount(Player.getAccount(name))){	
 							String challengee = name;
-							//sendPacketToAllClients(packetIn.getSender() + "has challenged "+ challengee);
+						
+							//print in chat that player1 has challenged player2
+							ServerObject sendoutAnnouncement = new ServerObject("SERVER ANNOUNCEMENT", null, 
+																packetIn.getSender() 
+																+ " has challenged "
+																+ challengee + "!!!");
+							sendPacketToAllClients(sendoutAnnouncement);
+							
+							
 							
 							//System.out.println("*sick ass UI comes up where challenger select game*");
 							
 							//challengee gets an accept or decline choice
 							
 							
-							//accepts
+							//challengee indicates to accept
 							
 							
 							//the challenger: packetIn.getSender() = player1
@@ -107,10 +115,9 @@ public class ServerConnection extends Thread
 							}
 							
 							//i hope this works
-							//"TTT" = Tic-Tac-Toe
 							GameServer Game = new GameServer(Player.getAccount(player1Connection.account.getUsername()),
 												Player.getAccount(player2Connection.account.getUsername()),
-												player1Connection, player2Connection, "TTT");
+												player1Connection, player2Connection, game);
 	
 						}
 					}
@@ -174,7 +181,7 @@ public class ServerConnection extends Thread
 				}
 				
 				//////////////////////////////////////////
-				//////////  CHALLENGEING     /////////////
+				///////////   CHALLENGING    /////////////
 				//////////////////////////////////////////
 				
 				
