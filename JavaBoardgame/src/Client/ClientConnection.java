@@ -8,13 +8,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 import Server.Player;
+import Server.ServerConnection;
 import Server.ServerObject;
 
 public class ClientConnection extends Thread 
@@ -23,12 +30,15 @@ public class ClientConnection extends Thread
 	String user;
 	String pass;
 	
+	ArrayList<String> currentConnected = new ArrayList<String>();
 	ObjectInputStream din2;
 	ObjectOutputStream dout2;
 	boolean shouldRun = true;
 
 	JFrame frame = new JFrame("Client");
 	
+	JMenuBar menuBar = new JMenuBar();
+	JMenu challenge = new JMenu("Challenge");;
 	JTextArea message = new JTextArea(8, 120);
 	JTextField data = new JTextField(40);
 	//MAKE A SCROLL WINDOW FOR MESSAGE.
@@ -108,11 +118,11 @@ public class ClientConnection extends Thread
 				}
 			}
 		}
-		
-		
+		menuBar.add(challenge);
 		
         frame.getContentPane().add(data, "South");
-        frame.getContentPane().add(message, "North");
+        frame.getContentPane().add(message, "Center");
+        frame.getContentPane().add(menuBar, "North");
         
         frame.setTitle("Challenger Client: " + user);
         message.setEditable(false);
@@ -152,6 +162,54 @@ public class ClientConnection extends Thread
 	            data.setText("");
             }
         });
+        challenge.addMenuListener(new MenuListener() {
+
+            @Override
+            public void menuSelected(MenuEvent e) 
+            {
+                ServerObject outMessege = new ServerObject("USERS", user, null);
+                sendPacketToServer(outMessege);
+                
+                for (String user1 : currentConnected)
+                {
+                	if (user1.equals(user))
+                	{
+                		continue;
+                	}
+                	JMenuItem temp = new JMenuItem(user1);
+                	challenge.add(temp);
+                	temp.addActionListener(new ActionListener()
+                	{
+                		String c1 = temp.getText();
+                		@Override
+                		public void actionPerformed(ActionEvent e)
+                		{
+                			Object[] options = {"Tic Tac Toe", "Chess", "Checkers"};
+                			int sel = JOptionPane.showOptionDialog(null, "Select an option:\n", 
+                					"Game Choice", JOptionPane.DEFAULT_OPTION,	
+                					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                			
+                			System.out.println(sel);
+                			System.out.println(c1);
+                			System.out.println(user);
+                            ServerObject outMessege = new ServerObject("CHALLENGE", user, c1, sel);
+                            sendPacketToServer(outMessege);
+                		}
+                	});
+                }
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) 
+            {
+                challenge.removeAll();
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+
+            }
+        });
 	}
 
 	public void sendPacketToServer(ServerObject packet)
@@ -169,16 +227,26 @@ public class ClientConnection extends Thread
 
 	public void run()
 	{
+        ServerObject outMessege = new ServerObject("USERS", user, null);
+        sendPacketToServer(outMessege);
+        
 		while(shouldRun)
 		{
 			try 
 			{
+
+                
 				ServerObject incoming = (ServerObject) din2.readObject();
 				
 				if (incoming.getHeader().equals("MESSAGE"))
 				{
 					message.append(incoming.getSender() + " > " + incoming.getPayload() + "\n");
-				}	
+				}
+				
+				if (incoming.getHeader().equals("USERS"))
+				{
+					currentConnected = (ArrayList<String>)incoming.getPayload();
+				}
 			} 
 			catch (IOException e) 
 			{

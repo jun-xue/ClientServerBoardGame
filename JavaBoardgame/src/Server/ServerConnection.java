@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ServerConnection extends Thread 
 {
@@ -162,6 +163,22 @@ public class ServerConnection extends Thread
 						sendPacketToClient(outPacket);
 					}
 				}
+				//////////////////////////////////////////
+				//////////       USERS       /////////////
+				//////////////////////////////////////////
+				
+				else if (packetIn.getHeader().equals("USERS"))
+				{
+					ArrayList<String> users = new ArrayList<String>();
+					for (ServerConnection sc : server.connections)
+					{
+						users.add(sc.account.username);
+					}
+
+					ServerObject outPacket = new ServerObject("USERS", null, users);
+					System.out.println("Sending Clients");
+					sendPacketToClient(outPacket);
+				}
 				
 				//////////////////////////////////////////
 				//////////       LEAVING     /////////////
@@ -180,25 +197,30 @@ public class ServerConnection extends Thread
 				
 				else if (packetIn.getHeader().equals("CHALLENGE"))
 				{
-					String temp = ((String) packetIn.getPayload());
-					String[] temp2 = temp.split(" ");
+					int temp = ((int) packetIn.getPayload());
 					ServerConnection challenged = null;
-					//temp2[1] = challenged name, temp2[2] = game type
+					ServerConnection challenger = null;
 					
 					for (ServerConnection sc : server.connections)
 					{
-						if (sc.account.username.equals(temp2[1]))
+						if (sc.account.username.equals(packetIn.getReceiver()))
 						{
 							challenged = sc;
 						}
+						
+						if (sc.account.username.equals(packetIn.getSender()))
+						{
+							challenger = sc;
+						}
 					}
-					if (challenged != null)
-					{
-						server.challenges.put(challenged, temp2[2]);
-						ServerObject outPacket = new ServerObject("MESSAGE", "Server", "You have been challenged by " + packetIn.getSender() + " to a game of " + temp2[2] + ". type '/accept' to accept the duel!\n");
-						challenged.dout2.writeObject(outPacket);
-					}
+					
+					ServerObject outPacket = new ServerObject("MESSAGE", "Server", "You have been challenged by " + packetIn.getSender() + " to a game of " + temp + ".");
+					challenged.dout2.writeObject(outPacket);
+					
+					ServerObject outPacket2 = new ServerObject("MESSAGE", "Server", "You have challenged " + packetIn.getReceiver() + " to a game of " + temp + ".");
+					challenger.dout2.writeObject(outPacket2);
 				}
+				
 				else if (packetIn.getHeader().equals("ACCEPT"))
 				{
 					if (server.challenges.contains(this))

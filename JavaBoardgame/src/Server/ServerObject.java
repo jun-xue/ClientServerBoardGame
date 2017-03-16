@@ -9,12 +9,20 @@ public class ServerObject implements Serializable
 	private String header;
 	private Object payload;
 	private String sender;
+	private String receiver;
 
 	public ServerObject(String header, String sender, Object payload)
 	{
 		this.header = header;
 		this.payload = payload;
 		this.sender = sender;
+	}
+	public ServerObject(String header, String sender, String receiver, Object payload)
+	{
+		this.header = header;
+		this.payload = payload;
+		this.sender = sender;
+		this.receiver = receiver;
 	}
 	
 	public Object getPayload()
@@ -30,5 +38,10 @@ public class ServerObject implements Serializable
 	public String getSender()
 	{
 		return sender;
+	}
+	
+	public String getReceiver()
+	{
+		return receiver;
 	}
 }
