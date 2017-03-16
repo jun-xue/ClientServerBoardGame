@@ -19,14 +19,16 @@ public class Client
 	
 	public Client() throws UnknownHostException, IOException, ClassNotFoundException
 	{
-		loginDialog = new LoginDialogUI(null, true);
-		cc = new ClientConnection(loginDialog.s, this);
+		//loginDialog = new LoginDialogUI(null, true);
+		//cc = new ClientConnection(loginDialog.s, this);
+		GameClient gc = new GameClient(null);
 		SwingUtilities.invokeLater(new Runnable() 
 		{
 		    @Override
 		    public void run() 
 		    {
-				cc.start();
+				//cc.start();
+		    	gc.start();
 		    }
 		});
 	}
