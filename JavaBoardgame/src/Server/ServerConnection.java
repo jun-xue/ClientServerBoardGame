@@ -60,77 +60,7 @@ public class ServerConnection extends Thread
 				
 				if (packetIn.getHeader().equals("MESSAGE"))
 				{
-					
-					
-					//this is just me trying to not get an error from typecasting a 
-					//ServerObject packetIn to a String.
-					Object payloadToString = packetIn.getPayload();
-					String textMessageContent = payloadToString.toString();
-					
-					//if a message in chat starts with the word "challenge" it will check accounts 
-					//to see if who was challenged was valid, if so, players are thrown into a 
-					//GameServer instance together. Messages are split by a space
-					//so an example would be: "challenge player1 checkers"
-					
-					if (textMessageContent.length() > 9 && textMessageContent.substring(0,9).equals("challenge")){	
-						String [] temp = textMessageContent.split(" ");
-						//if player exists,
-						String name = temp[1];
-						String game = temp[2];
-						
-						if(Player.checkForAccount(Player.getAccount(name))){	
-							String challengee = name;
-						
-							//print in chat that player1 has challenged player2
-							ServerObject sendoutAnnouncement = new ServerObject("SERVER ANNOUNCEMENT", null, 
-																packetIn.getSender() 
-																+ " has challenged "
-																+ challengee + "!!!");
-							sendPacketToAllClients(sendoutAnnouncement);
-							
-							
-							
-							//System.out.println("*sick ass UI comes up where challenger select game*");
-							
-							//challengee gets an accept or decline choice
-							
-							
-							//challengee indicates to accept
-							
-							
-							//the challenger: packetIn.getSender() = player1
-							//the challengee: challengee = player2
-							
-							
-							//find appropriate client connections from Player account usernames
-							ServerConnection player1Connection = null;
-							ServerConnection player2Connection = null;
-							
-							for (int index = 0; index < server.connections.size(); index++)
-							{
-								ServerConnection find = server.connections.get(index);
-								if (find.account.getUsername().equals(packetIn.getSender()))
-									player1Connection = find;
-								else if (find.account.getUsername().equals(challengee))
-									player2Connection = find;
-							}
-							
-							//i hope this works
-							GameServer Game = new GameServer(Player.getAccount(player1Connection.account.getUsername()),
-												Player.getAccount(player2Connection.account.getUsername()),
-												player1Connection, player2Connection, game);
-	
-						}
-					}
-
-					else{
-						
-						//otherwise, treat message as normal send message in chatroom
-						sendPacketToAllClients(packetIn);
-					}
-					
-					
-	
+					sendPacketToAllClients(packetIn);
 				}
 				
 				//////////////////////////////////////////
@@ -183,7 +113,6 @@ public class ServerConnection extends Thread
 					}
 
 					ServerObject outPacket = new ServerObject("USERS", null, users);
-					System.out.println("Sending Clients");
 					sendPacketToClient(outPacket);
 				}
 				
@@ -220,22 +149,104 @@ public class ServerConnection extends Thread
 							challenger = sc;
 						}
 					}
+					if (server.challenges.containsKey(challenger.account.username))
+					{
+						ServerObject outPacket2 = new ServerObject("MESSAGE", "Server", "You already have a pending challenge out!");
+						challenger.dout2.writeObject(outPacket2);
+						continue;
+					}
+					System.out.println("Putting " + challenger.account.username + challenged.account.username );
+					server.challenges.put(challenger.account.username, challenged.account.username);
 					
-					ServerObject outPacket = new ServerObject("MESSAGE", "Server", "You have been challenged by " + packetIn.getSender() + " to a game of " + temp + ".");
-					challenged.dout2.writeObject(outPacket);
+					if (temp == 0)
+					{
+						ServerObject outPacket = new ServerObject("MESSAGE", "Server", "You have been challenged by " + packetIn.getSender() + " to a game of Tic Tac Toe.");
+						challenged.dout2.writeObject(outPacket);
+						
+						ServerObject outPacket2 = new ServerObject("MESSAGE", "Server", "You have challenged " + packetIn.getReceiver() + " to a game of Tic Tac Toe.");
+						challenger.dout2.writeObject(outPacket2);
+					}
+					else if (temp == 1)
+					{
+						ServerObject outPacket = new ServerObject("MESSAGE", "Server", "You have been challenged by " + packetIn.getSender() + " to a game of Chess.");
+						challenged.dout2.writeObject(outPacket);
+						
+						ServerObject outPacket2 = new ServerObject("MESSAGE", "Server", "You have challenged " + packetIn.getReceiver() + " to a game of Chess.");
+						challenger.dout2.writeObject(outPacket2);
+					}
+					else if (temp == 2)
+					{
+						ServerObject outPacket = new ServerObject("MESSAGE", "Server", "You have been challenged by " + packetIn.getSender() + " to a game of Checkers.");
+						challenged.dout2.writeObject(outPacket);
+						
+						ServerObject outPacket2 = new ServerObject("MESSAGE", "Server", "You have challenged " + packetIn.getReceiver() + " to a game of Checkers.");
+						challenger.dout2.writeObject(outPacket2);
+					}
 					
-					ServerObject outPacket2 = new ServerObject("MESSAGE", "Server", "You have challenged " + packetIn.getReceiver() + " to a game of " + temp + ".");
-					challenger.dout2.writeObject(outPacket2);
 				}
 				
+				else if (packetIn.getHeader().equals("CHALLENGES"))
+				{
+					ServerObject outPacket = new ServerObject("CHALLENGES", "Server", server.challenges);
+					sendPacketToAllClients(outPacket);
+				}
+				
+				//////////////////////////////////////////
+				///////////     ACCEPTING    /////////////
+				//////////////////////////////////////////
 				else if (packetIn.getHeader().equals("ACCEPT"))
 				{
-					if (server.challenges.contains(this))
+					ServerConnection player1Connection = null;
+					ServerConnection player2Connection = null;
+					
+					for (int index = 0; index < server.connections.size(); index++)
 					{
-						// START NEW SERVER WITH GAME MODE IN IT
-						// GameServer gs = new GameServer(this, Somehow get the person who challenged, server.challenges.get(this));
-						server.challenges.remove(this);
+						ServerConnection find = server.connections.get(index);
+						if (find.account.getUsername().equals(packetIn.getSender()))
+							player1Connection = find;
+						else if (find.account.getUsername().equals(packetIn.getReceiver()))
+							player2Connection = find;
 					}
+					
+					GameServer Game = new GameServer(Player.getAccount(player1Connection.account.getUsername()),
+							Player.getAccount(player2Connection.account.getUsername()),
+							player1Connection, player2Connection, (int)packetIn.getPayload());
+				}
+				
+				//////////////////////////////////////////
+				///////////     DECLINING    /////////////
+				//////////////////////////////////////////
+				
+				else if (packetIn.getHeader().equals("DECLINE"))
+				{
+					ServerConnection challenged = null;
+					ServerConnection challenger = null;
+					
+					for (ServerConnection sc : server.connections)
+					{
+						if (sc.account.username.equals(packetIn.getReceiver()))
+						{
+							challenged = sc;
+						}
+						
+						if (sc.account.username.equals(packetIn.getSender()))
+						{
+							challenger = sc;
+						}
+					}
+					
+					server.challenges.remove(packetIn.getSender());
+					
+					
+					//////////// FIX THIS ITS SO CLOSE
+					
+					
+					ServerObject outPacket = new ServerObject("MESSAGE", "Server", "You declined " + packetIn.getSender() + "'s challenge.");
+					challenged.dout2.writeObject(outPacket);
+					
+					ServerObject outPacket2 = new ServerObject("MESSAGE", "Server", packetIn.getReceiver() + " declined your challenge!");
+					challenger.dout2.writeObject(outPacket2);
+					
 				}
 			}
 

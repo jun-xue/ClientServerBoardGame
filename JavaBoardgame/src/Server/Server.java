@@ -10,7 +10,7 @@ public class Server
 {
 	ServerSocket ss;
 	ArrayList<ServerConnection> connections = new ArrayList<ServerConnection>();
-	Hashtable<ServerConnection, String> challenges = new Hashtable<ServerConnection, String>();
+	Hashtable<String, String> challenges = new Hashtable<String, String>();
 	boolean shouldRun = true;
 	
 	public static void main(String[] args)
