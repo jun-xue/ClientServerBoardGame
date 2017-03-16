@@ -62,7 +62,7 @@ public class ClientConnection extends Thread
 		
 		Object[] options = {"Login", "New Account"};
 		int sel = JOptionPane.showOptionDialog(null, "Select an option:\n" +
-				"(if the prvious login fails, this will pop up again)", 
+				"(if the previous login fails, this will pop up again)", 
 				"Challenger Log In", JOptionPane.DEFAULT_OPTION,	
 				JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 		
@@ -242,11 +242,19 @@ public class ClientConnection extends Thread
 				if (incoming.getHeader().equals("MESSAGE"))
 				{
 					message.append(incoming.getSender() + " > " + incoming.getPayload() + "\n");
+<<<<<<< HEAD
+					
+				}	
+				else if (incoming.getHeader().equals("SERVER ANNOUNCEMENT"))
+				{	
+					message.append(incoming.getPayload() + "\n");
+=======
 				}
 				
 				if (incoming.getHeader().equals("USERS"))
 				{
 					currentConnected = (ArrayList<String>)incoming.getPayload();
+>>>>>>> origin/master
 				}
 			} 
 			catch (IOException e) 
