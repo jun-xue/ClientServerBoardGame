@@ -24,7 +24,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import Server.Player;
-import Server.ServerConnection;
+import Server.ServerConnection1;
 import Server.ServerObject;
 
 public class ClientConnection extends Thread 

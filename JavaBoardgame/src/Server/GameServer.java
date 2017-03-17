@@ -8,15 +8,15 @@ public class GameServer
 	Player player1;
 	Player player2;
 	
-	ServerConnection player1connection;
-	ServerConnection player2connection;
+	ServerConnection1 player1connection;
+	ServerConnection1 player2connection;
 	
 	GameBoard gameBoard;
 	
 	
 	GameServer (Player player1, Player player2, 
-				ServerConnection connection1, 
-				ServerConnection connection2, 
+				ServerConnection1 connection1, 
+				ServerConnection1 connection2, 
 				int gameType)
 	{
 		

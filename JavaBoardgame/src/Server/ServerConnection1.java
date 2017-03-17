@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ServerConnection extends Thread 
+public class ServerConnection1 extends Thread 
 {
 	Socket socket;
 	Server server;
@@ -15,7 +15,7 @@ public class ServerConnection extends Thread
 	boolean shouldRun = true;
 	public Player account;
 	
-	public ServerConnection (Socket socket, Server server)
+	public ServerConnection1 (Socket socket, Server server)
 	{
 		super("ServerConnectionThread");
 		this.socket = socket;
@@ -38,7 +38,7 @@ public class ServerConnection extends Thread
 	{
 		for (int index = 0; index < server.connections.size(); index++)
 		{
-			ServerConnection sc = server.connections.get(index);
+			ServerConnection1 sc = server.connections.get(index);
 			sc.sendPacketToClient(packet);
 		}
 	}
@@ -57,74 +57,74 @@ public class ServerConnection extends Thread
 				//////////////////////////////////////////
 				//////////      MESSAGES     /////////////
 				//////////////////////////////////////////
-				
-				if (packetIn.getHeader().equals("MESSAGE"))
-				{
-					sendPacketToAllClients(packetIn);
-				}
+//				
+//				if (packetIn.getHeader().equals("MESSAGE"))
+//				{
+//					sendPacketToAllClients(packetIn);
+//				}
 				
 				//////////////////////////////////////////
 				//////////  ACCOUNT SETTINGS /////////////
 				//////////////////////////////////////////
 				
-				else if (packetIn.getHeader().equals("REGISTER"))
-				{
-					account = (Player)packetIn.getPayload();
-					if (Player.checkForAccount(account) == true)
-					{
-						ServerObject outPacket = new ServerObject("INVALID", null, null);
-						sendPacketToClient(outPacket);
-						System.out.println("Account invalid");
-					}
-					else
-					{
-						Player.putNewAccount(account);
-						Player.saveAccounts();
-						ServerObject outPacket = new ServerObject("VALID", null, null);
-						sendPacketToClient(outPacket);
-						System.out.println("Account added");
-					}
-				}
-				else if (packetIn.getHeader().equals("LOGIN"))
-				{
-					account = (Player)packetIn.getPayload();
-					if (Player.checkPassword(account) == true)
-					{
-						ServerObject outPacket = new ServerObject("VALID", null, null);
-						sendPacketToClient(outPacket);
-						
-					}
-					else
-					{
-						ServerObject outPacket = new ServerObject("INVALID", null, null);
-						sendPacketToClient(outPacket);
-					}
-				}
+//				else if (packetIn.getHeader().equals("REGISTER"))
+//				{
+//					account = (Player)packetIn.getPayload();
+//					if (Player.checkForAccount(account) == true)
+//					{
+//						ServerObject outPacket = new ServerObject("INVALID", null, null);
+//						sendPacketToClient(outPacket);
+//						System.out.println("Account invalid");
+//					}
+//					else
+//					{
+//						Player.putNewAccount(account);
+//						Player.saveAccounts();
+//						ServerObject outPacket = new ServerObject("VALID", null, null);
+//						sendPacketToClient(outPacket);
+//						System.out.println("Account added");
+//					}
+//				}
+//				else if (packetIn.getHeader().equals("LOGIN"))
+//				{
+//					account = (Player)packetIn.getPayload();
+//					if (Player.checkPassword(account) == true)
+//					{
+//						ServerObject outPacket = new ServerObject("VALID", null, null);
+//						sendPacketToClient(outPacket);
+//						
+//					}
+//					else
+//					{
+//						ServerObject outPacket = new ServerObject("INVALID", null, null);
+//						sendPacketToClient(outPacket);
+//					}
+//				}
 				//////////////////////////////////////////
 				//////////       USERS       /////////////
 				//////////////////////////////////////////
 				
-				else if (packetIn.getHeader().equals("USERS"))
-				{
-					ArrayList<String> users = new ArrayList<String>();
-					for (ServerConnection sc : server.connections)
-					{
-						users.add(sc.account.username);
-					}
-
-					ServerObject outPacket = new ServerObject("USERS", null, users);
-					sendPacketToClient(outPacket);
-				}
+//				else if (packetIn.getHeader().equals("USERS"))
+//				{
+//					ArrayList<String> users = new ArrayList<String>();
+//					for (ServerConnection1 sc : server.connections)
+//					{
+//						users.add(sc.account.username);
+//					}
+//
+//					ServerObject outPacket = new ServerObject("USERS", null, users);
+//					sendPacketToClient(outPacket);
+//				}
 				
 				//////////////////////////////////////////
 				//////////       LEAVING     /////////////
 				//////////////////////////////////////////
 				
-				else if (packetIn.getHeader().equals("LEAVE"))
-				{
-					server.connections.remove(this);
-					break;
-				}
+//				else if (packetIn.getHeader().equals("LEAVE"))
+//				{
+//					server.connections.remove(this);
+//					break;
+//				}
 				
 				//////////////////////////////////////////
 				///////////   CHALLENGING    /////////////
@@ -134,10 +134,10 @@ public class ServerConnection extends Thread
 				else if (packetIn.getHeader().equals("CHALLENGE"))
 				{
 					int temp = ((int) packetIn.getPayload());
-					ServerConnection challenged = null;
-					ServerConnection challenger = null;
+					ServerConnection1 challenged = null;
+					ServerConnection1 challenger = null;
 					
-					for (ServerConnection sc : server.connections)
+					for (ServerConnection1 sc : server.connections)
 					{
 						if (sc.account.username.equals(packetIn.getReceiver()))
 						{
@@ -196,12 +196,12 @@ public class ServerConnection extends Thread
 				//////////////////////////////////////////
 				else if (packetIn.getHeader().equals("ACCEPT"))
 				{
-					ServerConnection player1Connection = null;
-					ServerConnection player2Connection = null;
+					ServerConnection1 player1Connection = null;
+					ServerConnection1 player2Connection = null;
 					
 					for (int index = 0; index < server.connections.size(); index++)
 					{
-						ServerConnection find = server.connections.get(index);
+						ServerConnection1 find = server.connections.get(index);
 						if (find.account.getUsername().equals(packetIn.getSender()))
 							player1Connection = find;
 						else if (find.account.getUsername().equals(packetIn.getReceiver()))
@@ -219,10 +219,10 @@ public class ServerConnection extends Thread
 				
 				else if (packetIn.getHeader().equals("DECLINE"))
 				{
-					ServerConnection challenged = null;
-					ServerConnection challenger = null;
+					ServerConnection1 challenged = null;
+					ServerConnection1 challenger = null;
 					
-					for (ServerConnection sc : server.connections)
+					for (ServerConnection1 sc : server.connections)
 					{
 						if (sc.account.username.equals(packetIn.getReceiver()))
 						{
