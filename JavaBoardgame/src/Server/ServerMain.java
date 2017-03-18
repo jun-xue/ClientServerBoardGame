@@ -94,7 +94,7 @@ public class ServerMain
 							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
 							sendPacketToClient(outPacket);
 							account = (Player)packetIn.getPayload();
-							System.out.println("New user " + account.username + " has connected with " + account.wins + " wins and " + account.loses + "loses!\n");
+							System.out.println("New user " + account.username + " has connected with " + account.wins + " wins and " + account.loses + " loses!\n");
 							received = true;
 						}
 					}
@@ -110,7 +110,7 @@ public class ServerMain
 							
 							account = (Player)packetIn.getPayload();
 							
-							System.out.println("User " + account.username + " has connected with " + account.wins + " wins and " + account.loses + "loses!\n");
+							System.out.println("User " + account.username + " has connected with " + account.wins + " wins and " + account.loses + " loses!\n");
 							received = true;
 						}
 						else // the name either doesn't exist or had the wrong password
@@ -170,24 +170,17 @@ public class ServerMain
 						newRoom.port = gameSocket.getLocalPort();
 						newRoom.account = account;
 						newRoom.createGameServer(gameSocket);
-
-						usernames.remove(account.username);
-						outputStreams.remove(oos);
-						break;
+						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", newRoom.port));
+						
+						
 					}
 					
 					// The Request to join a room
 					else if(packetIn.getHeader().equals("JOINROOM"))
 					{
-						//The Payload should be the room number
-						//So we can send the port back
-						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", gameRoomsList.get((int)packetIn.getPayload())));
-						
-						
-						
-						usernames.remove(account.username);
-						outputStreams.remove(oos);
-						break;
+						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", gameRoomsList.get((int) packetIn.getPayload()).port));
+
+					
 					}
 					else if(packetIn.getHeader().equals("REFRESHPLAYERS"))
 					{

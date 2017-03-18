@@ -10,9 +10,12 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import Server.Player;
 import Server.ServerObject;
+import UI.GameRoomUI;
 import UI.LoadInUI;
 
 public class ClientMain 
@@ -109,6 +112,22 @@ public class ClientMain
 				}
 			}
 		});
+		
+		loadInUI.games.addListSelectionListener(new ListSelectionListener() {
+		      public void valueChanged(ListSelectionEvent le) {
+		    	  if(loadInUI.games.getSelectedIndex() != -1 && !le.getValueIsAdjusting()) 
+		    	  {
+		    		  try 
+		    		  {
+		    			  oos.writeObject(new ServerObject("JOINROOM", account.username, loadInUI.games.getSelectedIndex()));
+		    		  } 
+		    		  catch (IOException e1) 
+		    		  {
+		    			  e1.printStackTrace();
+		    		  }
+		    	  }
+		      }
+		});
 	}
 	
 	public void run() throws IOException, ClassNotFoundException
@@ -171,6 +190,10 @@ public class ClientMain
 			{
 				loadInUI.updateRooms((String[]) packetIn.getPayload());
 			}
+			else if (packetIn.getHeader().equals("CONNECTTOROOM"))
+			{
+				connectToRoom(server, (int)packetIn.getPayload());
+			}
 			loadInUI.setTitle("Challenger Client: " + account.username);
 		}
 	}
@@ -180,6 +203,8 @@ public class ClientMain
         Socket socket = new Socket(serverName, port);
 		ObjectOutputStream oosRoom;
 		ObjectInputStream oisRoom;
+		GameRoomUI newRoom = new GameRoomUI();
+		newRoom.setVisible(true);
 		//this will create the new window and display everything
 		oosRoom = new ObjectOutputStream(socket.getOutputStream());
 		oisRoom = new ObjectInputStream(socket.getInputStream());

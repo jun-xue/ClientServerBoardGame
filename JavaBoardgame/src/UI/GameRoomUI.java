@@ -53,9 +53,9 @@ public class GameRoomUI extends JFrame
 		status.setText(newS);
 	}
 	
-	public static void main(String args[]) {
-		GameRoomUI test = new GameRoomUI();
-		test.setVisible(true);
-	} 
+//	public static void main(String args[]) {
+//		GameRoomUI test = new GameRoomUI();
+//		test.setVisible(true);
+//	} 
 
 }

@@ -74,8 +74,8 @@ public class LoadInUI extends JFrame
 		games.setListData(Arrays.copyOfRange(rooms, 0, rooms.length));
 	}
 	
-	public static void main(String args[]){
-		LoadInUI test = new LoadInUI();
-		test.setVisible(true);
-	}
+//	public static void main(String args[]){
+//		LoadInUI test = new LoadInUI();
+//		test.setVisible(true);
+//	}
 }
