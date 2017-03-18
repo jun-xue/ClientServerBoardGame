@@ -16,14 +16,13 @@ public class LoadInUI extends JFrame
 	public JList<String> players;
 	public JList<String> games;
 	
-	JButton hostGame;
+	public JButton hostGame;
 	
 	public JTextField text = new JTextField(40);
 	public JTextArea message = new JTextArea(10,40);
 	
 	public LoadInUI()
 	{
-		setTitle("Challenger Client");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 575);
 		setResizable(false);

@@ -1,5 +1,7 @@
 package Client;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,8 +41,43 @@ public class ClientMain
 		this.port = port;
 		loadInUI = new LoadInUI();
 
-		//make action listoners for the loadInUI stuff here
+		//make action listoners 
+		loadInUI.text.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				try 
+				{
+					oos.writeObject(new ServerObject("MESSAGE", account.username, loadInUI.text.getText()));
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+				loadInUI.text.setText("");
+			}
+		});
 		
+		loadInUI.hostGame.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				String roomName = JOptionPane.showInputDialog("Enter a Room Name: ");
+				String[] options = {"Tic-Tac-Toe", "Chess", "Checkers" };
+				int choice = JOptionPane.showOptionDialog(null, "Choose a Game:", "Choose Game",
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null, options, options[0]);
+				String[] temp = {roomName, Integer.toString(choice)};
+				try 
+				{
+					oos.writeObject(new ServerObject("MAKEROOM", account.username, temp));
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void run() throws IOException, ClassNotFoundException
@@ -93,13 +130,14 @@ public class ClientMain
 			}
 			else if (packetIn.getHeader().equals("MESSAGE"))
 			{
-				loadInUI.message.append(packetIn.getPayload().toString());
+				loadInUI.message.append(packetIn.getSender() + "> " + packetIn.getPayload().toString() + "\n");
 			}
 			else if (packetIn.getHeader().equals("CONNECTTOROOM"))
 			{
 				// the packetIN payload will have the port number for the room to connect to
 				connectToRoom(server, (int)packetIn.getPayload());
 			}
+			loadInUI.setTitle("Challenger Client: " + account.username);
 		}
 	}
 	
