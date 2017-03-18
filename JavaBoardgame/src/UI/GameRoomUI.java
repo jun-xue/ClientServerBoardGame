@@ -3,6 +3,7 @@ package UI;
 import java.awt.Rectangle;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,11 +16,11 @@ public class GameRoomUI extends JFrame
 {
 	private static final long serialVersionUID = -1818753098009676013L;
 	
-	JTextField text = new JTextField(40);
-	JTextArea message = new JTextArea(8,40);
-	JLabel status = new JLabel("Welcome to the Game");
-	JPanel gameBoard;
-	
+	public JTextField text = new JTextField(40);
+	public JTextArea message = new JTextArea(8,40);
+	public JLabel status = new JLabel("Welcome to the Game");
+	public JPanel gameBoard;
+	public JButton leave;
 	public GameRoomUI()
 	{
 		setTitle("Challenger Game");
@@ -39,6 +40,9 @@ public class GameRoomUI extends JFrame
 		status.setBounds(375, 10, 300, 25);
 		getContentPane().add(status);
 		
+		leave = new JButton("X");
+		leave.setBounds(0, 0, 25, 25);
+		getContentPane().add(leave);
 		
 		gameBoard = new JPanel();
 		gameBoard.setLayout(new BoxLayout(gameBoard, BoxLayout.X_AXIS));

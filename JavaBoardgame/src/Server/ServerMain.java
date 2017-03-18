@@ -165,11 +165,9 @@ public class ServerMain
 							newRoom.setUpGame(Integer.parseInt(((String[])packetIn.getPayload())[1]));
 							gameRoomsList.add(newRoom);
 						}
-						
 						ServerSocket gameSocket = new ServerSocket(0);
 						newRoom.port = gameSocket.getLocalPort();
-						newRoom.account = account;
-						newRoom.createGameServer(gameSocket);
+						newRoom.createGameServer(gameSocket, account);
 						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", newRoom.port));
 						
 						
@@ -196,15 +194,46 @@ public class ServerMain
 					else if(packetIn.getHeader().equals("REFRESHGAMES"))
 					{
 						ArrayList<String> rooms = new ArrayList<String>();
-						if (gameRoomsList.size() != 0)
+						synchronized (gameRoomsList) 
 						{
-							for(GameRoom name: gameRoomsList) 
-							{ 
-								rooms.add(name.roomName);
+							ArrayList<Integer> removeThese = new ArrayList<Integer>();
+							for(GameRoom room: gameRoomsList) 
+							{
+								if(room.currentPlayers == room.maxPlayers) 
+								{
+									removeThese.add(gameRoomsList.indexOf(room));
+								}
 							}
-						sendPacketToClient(new ServerObject("UPDATEROOMS", "Server", rooms.toArray(new String[rooms.size()])));
+							for(int index : removeThese) 
+							{
+								gameRoomsList.remove(index);
+							}
+							
+							if (gameRoomsList.size() != 0)
+							{
+								for(GameRoom name: gameRoomsList) 
+								{ 
+									rooms.add(name.roomName);
+								}
+							}
+							sendPacketToClient(new ServerObject("UPDATEROOMS", "Server", rooms.toArray(new String[rooms.size()])));
 						}
-					} 
+					}
+					synchronized (gameRoomsList) 
+					{
+						ArrayList<Integer> removeThese = new ArrayList<Integer>();
+						for(GameRoom room: gameRoomsList) 
+						{
+							if(room.currentPlayers == room.maxPlayers) 
+							{
+								removeThese.add(gameRoomsList.indexOf(room));
+							}
+						}
+						for(int index : removeThese) 
+						{
+							gameRoomsList.remove(index);
+						}
+					}
 				}	
 			} 
 			catch (IOException e) 

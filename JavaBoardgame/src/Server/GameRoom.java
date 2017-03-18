@@ -13,16 +13,14 @@ public class GameRoom
     private HashSet<ObjectOutputStream> outputStreams = new HashSet<ObjectOutputStream>();
     
     public String roomName;
-    private int maxPlayers = 2;
-    private int currentPlayers = 0;
+    public int maxPlayers = 2;
+    public int currentPlayers = 0;
     
     // private gameFactory
     // private game
     
     public ServerSocket socket;
     public int port;
-    
-    public Player account;
 
     public GameRoom(String roomName)
     {
@@ -37,18 +35,20 @@ public class GameRoom
     	port = socket.getLocalPort();
     }
     
-    public void createGameServer(ServerSocket gameSocket)
+    public void createGameServer(ServerSocket gameSocket, Player account)
     {
-    	new GameRoomServer(gameSocket).start();
+    	new GameRoomServer(gameSocket, account).start();
     }
     
     public class GameRoomServer extends Thread
     {
     	private ServerSocket s;
+    	private Player a;
     	
-    	public GameRoomServer(ServerSocket s)
+    	public GameRoomServer(ServerSocket s, Player a)
     	{
     		this.s = s;
+    		this.a = a;
     	}
     	
     	public void run()
@@ -58,7 +58,7 @@ public class GameRoom
 			{
 				try 
 				{
-					new GameRoomServerHandler(s.accept()).start();
+					new GameRoomServerHandler(s.accept(), a).start();
 					currentPlayers++;
 				} 
 				catch (IOException e) 
@@ -77,7 +77,7 @@ public class GameRoom
 		private ObjectOutputStream oos;
 		private boolean gameNotWon = true;
 		
-		public GameRoomServerHandler(Socket s)
+		public GameRoomServerHandler(Socket s, Player account)
 		{
 			this.s = s; 
 			this.acc = account;
@@ -112,7 +112,12 @@ public class GameRoom
 					}
 					else if (packetIn.getHeader().equals("MESSAGE"))
 					{
-						sendPacketToAllClients(new ServerObject("MESSAGE", packetIn.getSender(), packetIn.getPayload()));
+						sendPacketToAllClients(new ServerObject("MESSAGE", packetIn.getSender(), packetIn.getSender() + "> " + packetIn.getPayload() + "\n"));
+					}
+					else if (packetIn.getHeader().equals("QUIT"))
+					{
+						//award win to other player
+						sendPacketToAllClients(new ServerObject("FINISHED", "Server", null));
 					}
 				}
 				
@@ -132,7 +137,7 @@ public class GameRoom
 				try
 				{
 					s.close();
-					sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + account.username + " has joined the server!"));
+					sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + acc.username + " has joined the server!"));
 				}
 				catch (IOException e)
 				{

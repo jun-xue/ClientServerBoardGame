@@ -198,8 +198,9 @@ public class ClientMain
 		}
 	}
 	
-	public void connectToRoom(String serverName, int port) throws UnknownHostException, IOException
+	public void connectToRoom(String serverName, int port) throws UnknownHostException, IOException, ClassNotFoundException
 	{	
+		loadInUI.setVisible(false);
         Socket socket = new Socket(serverName, port);
 		ObjectOutputStream oosRoom;
 		ObjectInputStream oisRoom;
@@ -209,5 +210,51 @@ public class ClientMain
 		oosRoom = new ObjectOutputStream(socket.getOutputStream());
 		oisRoom = new ObjectInputStream(socket.getInputStream());
 		//make the listners and all that shit in here, including sending stuff to the GameRoomServer
+		newRoom.text.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				try 
+				{
+					oosRoom.writeObject(new ServerObject("MESSAGE", account.username, newRoom.text.getText()));
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+				newRoom.text.setText("");
+			}
+		});
+		newRoom.leave.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				try 
+				{
+					oosRoom.writeObject(new ServerObject("QUIT", account.username, null));
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		while(true)
+		{
+			ServerObject packetIn = (ServerObject)oisRoom.readObject();
+			
+			if (packetIn.getHeader().equals("MESSAGE"))
+			{
+				newRoom.message.append(packetIn.getPayload().toString());
+			}
+			
+			if (packetIn.getHeader().equals("FINISHED"))
+			{
+				break;
+			}
+		}
+		
+		loadInUI.setVisible(true);
+		newRoom.dispose();
+		socket.close();
+		oosRoom.close();
+		oisRoom.close();
 	}
 }
