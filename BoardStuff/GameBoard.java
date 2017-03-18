@@ -9,7 +9,7 @@ import java.awt.event.MouseListener;
  * @author Daniel Ackerman 23104834
  * @version 0.1.0, 3/5/17
  */
-public class GameBoard extends JFrame implements MouseListener{
+public class GameBoard extends JPanel implements MouseListener{
     //instance variables
     private Color primary;
     private Color alternate;
@@ -20,9 +20,13 @@ public class GameBoard extends JFrame implements MouseListener{
     private String gameTitle;
     Tile[][] boardMatrix;
 
+    GameBoard(int boardWidth, int boardHeight, int rows, int cols, Color primary, Color alternate, String gameTitle) {
 
-    GameBoard(int boardWidth, int boardHeight, int rows, int cols, Color primary,
-                     Color alternate, String gameTitle) {
+        super(new GridLayout(rows, cols));
+        setMinimumSize(new Dimension(width, height));
+        setMaximumSize(new Dimension(width + 20, height + 20));
+        Border boardBorder = BorderFactory.createMatteBorder(10,10,10,10, Color.BLACK);
+        setBorder(boardBorder);
 
         //init board specs
         width = boardWidth;
@@ -37,17 +41,17 @@ public class GameBoard extends JFrame implements MouseListener{
         //2-D matrix for board representation/tile references
         boardMatrix = new Tile[numRows][numColumns];
 
-        //Outer JFrame - May add other features later...
-        JFrame board = new JFrame();
-        board.setSize(width + 20, height + 20);
-        board.setTitle(gameTitle);
-        board.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        //Outer JFrame - May add other features later...
+//        JFrame board = new JFrame();
+//        board.setSize(width + 20, height + 20);
+//        board.setTitle(gameTitle);
+//        board.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         //Outer JPanel or 'Board' that will contain the board Tiles.
-        JPanel gameBoard = new JPanel(new GridLayout(numRows, numColumns));
-        gameBoard.setSize(width + 20, height + 20); //+20 for border width (10 + 10)
-        Border boardBorder = BorderFactory.createMatteBorder(10,10,10,10, Color.BLACK);
-        gameBoard.setBorder(boardBorder);
+//        JPanel gameBoard = new JPanel(new GridLayout(numRows, numColumns));
+//        gameBoard.setSize(width + 20, height + 20); //+20 for border width (10 + 10)
+//        Border boardBorder = BorderFactory.createMatteBorder(10,10,10,10, Color.BLACK);
+//        gameBoard.setBorder(boardBorder);
 //        addMouseListener(this);
 
         //Alternate primary/secondary colors to paint the tiles/checkerboard
@@ -61,21 +65,20 @@ public class GameBoard extends JFrame implements MouseListener{
             }
             for (int j = 0; j < numColumns; ++j)    {
                 Tile tile = new Tile(i, j);
-                tile.addMouseListener(this);
                 tile.setBackground(paint);
                 if (paint.equals(primary))  {
                     paint = alternate;
                 }   else    {
                     paint = primary;
                 }
-                gameBoard.add(tile);
+                add(tile);
                 boardMatrix[i][j] = tile;
             }
             even ^= true;   //Flip boolean
         }
-        board.add(gameBoard);
-        board.setResizable(false);
-        board.setVisible(true);
+//        board.add(gameBoard);
+//        board.setResizable(false);
+        setVisible(true);
     }
 
     /**
@@ -116,24 +119,26 @@ public class GameBoard extends JFrame implements MouseListener{
      */
     @Override
     public void mouseClicked(MouseEvent e) {
+//        Tile selected = (Tile)e.getComponent();
+//        Border existingBorder = selected.getBorder();
+//        System.out.println("Selected row: " + selected.getRow() + ", column: " + selected.getColumn() + ".");
+//        Border highLight = BorderFactory.createLineBorder(Color.RED, 3);
+//        if (gameTitle.contentEquals("Tic Tac Toe")) {
+//            addTicTacToeBorders();
+//        }   else    {
+//            for (Tile[] tt : boardMatrix)   {
+//                for (Tile t : tt)   {
+//                    t.setBorder(null);
+//                }
+//            }
+//        }
+//        if (selected.getBorder() != highLight)   {
+//            selected.setBorder(highLight);
+//        }   else    {
+//            selected.setBorder(existingBorder);
+//        }
         Tile selected = (Tile)e.getComponent();
-        Border existingBorder = selected.getBorder();
-        System.out.println("Selected row: " + selected.getRow() + ", column: " + selected.getColumn() + ".");
-        Border highLight = BorderFactory.createLineBorder(Color.RED, 3);
-        if (gameTitle.contentEquals("Tic Tac Toe")) {
-            addTicTacToeBorders();
-        }   else    {
-            for (Tile[] tt : boardMatrix)   {
-                for (Tile t : tt)   {
-                    t.setBorder(null);
-                }
-            }
-        }
-        if (selected.getBorder() != highLight)   {
-            selected.setBorder(highLight);
-        }   else    {
-            selected.setBorder(existingBorder);
-        }
+        System.out.println(selected.getName());
     }
 
     @Override
@@ -155,7 +160,13 @@ public class GameBoard extends JFrame implements MouseListener{
 
     }
 
+    public int getNumRows() {
+        return  numRows;
+    }
 
+    public int getNumColumns() {
+        return  numColumns;
+    }
 
     void addTicTacToeBorders()   {
         Border leftRight, topBottom, all;
@@ -172,4 +183,5 @@ public class GameBoard extends JFrame implements MouseListener{
         boardMatrix[2][0].setBorder(null);
         boardMatrix[2][2].setBorder(null);
     }
+
 }

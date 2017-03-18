@@ -9,18 +9,28 @@ import java.util.ArrayList;
 public class ChessFactory implements AbstractGameFactory {
 
     @Override
+    public String getGameTitle() {
+        return null;
+    }
+
+    @Override
+    public Dimension getDimension() {
+        return null;
+    }
+
+    @Override
     public GameBoard createGameBoard() {
         return new GameBoard(600, 600, 8, 8,
                 new Color(182,155,76), new Color(43,30,20), "Chess");
     }
 
     @Override
-    public ArrayList<ImageIcon> loadImages() {
-        return null;
+    public void loadImages(Player goesFirst, Player two) {
+
     }
 
     @Override
-    public void setUpBoard(GameBoard board, ArrayList<ImageIcon> pieces) {
+    public void setInitOwnership(GameBoard board, Player client, Player opponent) {
 
     }
 }
