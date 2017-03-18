@@ -17,6 +17,8 @@ public class LoadInUI extends JFrame
 	public JList<String> games;
 	
 	public JButton hostGame;
+	public JButton refreshPlayers;
+	public JButton refreshGames;
 	
 	public JTextField text = new JTextField(40);
 	public JTextArea message = new JTextArea(10,40);
@@ -39,19 +41,27 @@ public class LoadInUI extends JFrame
 		players.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		JScrollPane namesHolder = new JScrollPane(players);
-		namesHolder.setBounds(0, 0, 200, 575);
+		namesHolder.setBounds(0, 25, 200, 550);
 		getContentPane().add(namesHolder);
 		
 		games = new JList<String>();
 		games.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		JScrollPane gamesHolder = new JScrollPane(games);
-		gamesHolder.setBounds(200, 0, 300, 500);
+		gamesHolder.setBounds(200, 25, 300, 475);
 		getContentPane().add(gamesHolder);
 		
 		hostGame = new JButton("Host Game");
 		hostGame.setBounds(200, 500, 300, 50);
 		getContentPane().add(hostGame);
+		
+		refreshGames = new JButton("Refresh Games");
+		refreshGames.setBounds(200, 0, 300, 25);
+		getContentPane().add(refreshGames);
+		
+		refreshPlayers = new JButton("Refresh Players");
+		refreshPlayers.setBounds(0, 0, 200, 25);
+		getContentPane().add(refreshPlayers);
 	}
 	
 	public void updatePlayers(String[] playerss)

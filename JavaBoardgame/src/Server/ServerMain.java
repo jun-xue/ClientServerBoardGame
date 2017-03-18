@@ -1,5 +1,6 @@
 package Server;
 
+import java.awt.List;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -142,6 +143,7 @@ public class ServerMain
 				// Notify all users of someone joining the server.
 				sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + account.username + " has joined the server!\n"));
 								
+				
 				//The while loop that takes all requests
 				while(true)
 				{
@@ -189,6 +191,29 @@ public class ServerMain
 						outputStreams.remove(oos);
 						break;
 					}
+					else if(packetIn.getHeader().equals("REFRESHPLAYERS"))
+					{
+						ArrayList<String> names = new ArrayList<String>();
+						for(String name: usernames) 
+						{ 
+							names.add(name);
+						}
+						
+						sendPacketToClient(new ServerObject("UPDATEPLAYERS", "Server", names.toArray()));
+					}
+					
+					else if(packetIn.getHeader().equals("REFRESHGAMES"))
+					{
+						ArrayList<String> rooms = new ArrayList<String>();
+						if (gameRoomsList.size() != 0)
+						{
+							for(GameRoom name: gameRoomsList) 
+							{ 
+								rooms.add(name.roomName);
+							}
+						sendPacketToClient(new ServerObject("UPDATEROOMS", "Server", rooms.toArray()));
+						}
+					} 
 				}	
 			} 
 			catch (IOException e) 

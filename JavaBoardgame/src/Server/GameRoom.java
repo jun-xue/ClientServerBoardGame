@@ -12,7 +12,7 @@ public class GameRoom
 	private HashSet<String> usernames = new HashSet<String>();
     private HashSet<ObjectOutputStream> outputStreams = new HashSet<ObjectOutputStream>();
     
-    private String roomName;
+    public String roomName;
     private int maxPlayers = 2;
     private int currentPlayers = 0;
     

@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
@@ -78,6 +79,36 @@ public class ClientMain
 				}
 			}
 		});
+		
+		loadInUI.refreshPlayers.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					oos.writeObject(new ServerObject("REFRESHPLAYERS", account.username, null));
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		loadInUI.refreshGames.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					oos.writeObject(new ServerObject("REFRESHGAMES", account.username, null));
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void run() throws IOException, ClassNotFoundException
@@ -132,10 +163,13 @@ public class ClientMain
 			{
 				loadInUI.message.append(packetIn.getSender() + "> " + packetIn.getPayload().toString() + "\n");
 			}
-			else if (packetIn.getHeader().equals("CONNECTTOROOM"))
+			else if (packetIn.getHeader().equals("UPDATEPLAYERS"))
 			{
-				// the packetIN payload will have the port number for the room to connect to
-				connectToRoom(server, (int)packetIn.getPayload());
+				loadInUI.updatePlayers((String[])packetIn.getPayload());
+			}
+			else if (packetIn.getHeader().equals("UPDATEROOMS"))
+			{
+				loadInUI.updateRooms((String[]) packetIn.getPayload());
 			}
 			loadInUI.setTitle("Challenger Client: " + account.username);
 		}
