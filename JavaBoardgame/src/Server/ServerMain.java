@@ -89,7 +89,7 @@ public class ServerMain
 							Player.putNewAccount((Player)packetIn.getPayload());
 							Player.saveAccounts();
 							
-							ServerObject outPacket = new ServerObject("VALID", null, null);
+							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
 							sendPacketToClient(outPacket);
 							
 							System.out.println("New user " + account.username + "has connected with " + account.wins + " wins and " + account.loses + "loses!");
@@ -104,7 +104,7 @@ public class ServerMain
 						
 						if (Player.checkForAccount((Player)packetIn.getPayload()) == true && Player.checkPassword((Player)packetIn.getPayload()) == true) // if the name does exist and the password is right
 						{
-							ServerObject outPacket = new ServerObject("VALID", null, null);
+							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
 							sendPacketToClient(outPacket);
 							
 							account = (Player)packetIn.getPayload();
@@ -135,8 +135,7 @@ public class ServerMain
 					}
 				}
 				
-				// Since the Name is Accepted, send an okay to the server.
-				sendPacketToClient(new ServerObject("NAMEACCEPTED", "Server", null));
+				// Since the Name is Accepted, send an okay to the clients.
 				outputStreams.add(oos);
 				
 				// Notify all users of someone joining the server.
@@ -156,13 +155,38 @@ public class ServerMain
 					// The Request to make a room
 					else if(packetIn.getHeader().equals("MAKEROOM"))
 					{
+						GameRoom newRoom;
+						//payload[0] == room name
+						//payload[1] == gametype
+						synchronized (gameRoomsList) 
+						{
+							newRoom = new GameRoom(((String[])packetIn.getPayload())[0]);
+							newRoom.setUpGame(Integer.parseInt(((String[])packetIn.getPayload())[1]));
+							gameRoomsList.add(newRoom);
+						}
 						
+						ServerSocket gameSocket = new ServerSocket(0);
+						newRoom.port = gameSocket.getLocalPort();
+						newRoom.account = account;
+						newRoom.createGameServer(gameSocket);
+
+						usernames.remove(account.username);
+						outputStreams.remove(oos);
+						break;
 					}
 					
 					// The Request to join a room
 					else if(packetIn.getHeader().equals("JOINROOM"))
 					{
+						//The Payload should be the room number
+						//So we can send the port back
+						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", gameRoomsList.get((int)packetIn.getPayload())));
 						
+						
+						
+						usernames.remove(account.username);
+						outputStreams.remove(oos);
+						break;
 					}
 				}	
 			} 

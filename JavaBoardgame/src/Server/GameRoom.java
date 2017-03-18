@@ -20,7 +20,7 @@ public class GameRoom
     // private game
     
     public ServerSocket socket;
-    private int port;
+    public int port;
     
     public Player account;
 
@@ -104,7 +104,7 @@ public class GameRoom
 					
 					if(packetIn.getHeader().equals("START"))
 					{
-						//game.startg()
+						//game.start()
 					}
 					else if (packetIn.getHeader().equals("MOVE"))
 					{
