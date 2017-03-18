@@ -36,6 +36,7 @@ public class ServerMain
 		}
 		finally
 		{
+			Player.saveAccounts();
 			ss.close();
 		}
 	}
@@ -92,10 +93,8 @@ public class ServerMain
 							
 							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
 							sendPacketToClient(outPacket);
-							
-							System.out.println("New user " + account.username + " has connected with " + account.wins + " wins and " + account.loses + "loses!\n");
 							account = (Player)packetIn.getPayload();
-							usernames.add(account.username);
+							System.out.println("New user " + account.username + " has connected with " + account.wins + " wins and " + account.loses + "loses!\n");
 							received = true;
 						}
 					}
@@ -110,7 +109,6 @@ public class ServerMain
 							sendPacketToClient(outPacket);
 							
 							account = (Player)packetIn.getPayload();
-							usernames.add(account.username);
 							
 							System.out.println("User " + account.username + " has connected with " + account.wins + " wins and " + account.loses + "loses!\n");
 							received = true;
@@ -128,9 +126,9 @@ public class ServerMain
 					{		
 						synchronized (usernames)
 						{
-							if (!usernames.contains(packetIn.getPayload().toString()))
+							if (!usernames.contains(account.username))
 							{
-								usernames.add(packetIn.getPayload().toString());
+								usernames.add(account.username);
 								break;
 							}
 						}
@@ -142,7 +140,7 @@ public class ServerMain
 				
 				// Notify all users of someone joining the server.
 				sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + account.username + " has joined the server!\n"));
-								
+				sendPacketToAllClients(new ServerObject("UPDATEPLAYERS", "Server", usernames.toArray(new String[usernames.size()])));
 				
 				//The while loop that takes all requests
 				while(true)
@@ -199,7 +197,7 @@ public class ServerMain
 							names.add(name);
 						}
 						
-						sendPacketToClient(new ServerObject("UPDATEPLAYERS", "Server", names.toArray()));
+						sendPacketToClient(new ServerObject("UPDATEPLAYERS", "Server", names.toArray(new String[names.size()])));
 					}
 					
 					else if(packetIn.getHeader().equals("REFRESHGAMES"))
@@ -211,7 +209,7 @@ public class ServerMain
 							{ 
 								rooms.add(name.roomName);
 							}
-						sendPacketToClient(new ServerObject("UPDATEROOMS", "Server", rooms.toArray()));
+						sendPacketToClient(new ServerObject("UPDATEROOMS", "Server", rooms.toArray(new String[rooms.size()])));
 						}
 					} 
 				}	
@@ -226,7 +224,7 @@ public class ServerMain
 			}
 			finally
 			{
-				if(account != null || oos != null)
+				if(account.username != null || oos != null)
 				{
 					usernames.remove(account.username);
 					outputStreams.remove(oos);
@@ -234,6 +232,7 @@ public class ServerMain
 				
 				try 
 				{
+					Player.saveAccounts();
 					socket.close();
 				} 
 				catch (IOException e) 

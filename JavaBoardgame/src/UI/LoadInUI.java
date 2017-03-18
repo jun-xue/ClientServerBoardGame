@@ -66,12 +66,12 @@ public class LoadInUI extends JFrame
 	
 	public void updatePlayers(String[] playerss)
 	{
-		players.setListData(Arrays.copyOfRange(playerss, 2, playerss.length));
+		players.setListData(Arrays.copyOfRange(playerss, 0, playerss.length));
 	}
 	
 	public void updateRooms(String[] rooms)
 	{
-		games.setListData(Arrays.copyOfRange(rooms, 2, rooms.length));
+		games.setListData(Arrays.copyOfRange(rooms, 0, rooms.length));
 	}
 	
 	public static void main(String args[]){
