@@ -1,4 +1,5 @@
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * @author Daniel Ackerman 23104834
@@ -11,7 +12,7 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected void run() {
+    protected void runGame() {
 
     }
 
@@ -38,5 +39,10 @@ public class ChessGame extends Game {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    protected ArrayList<Tile> availableMoves(Player isUp) {
+        return null;
     }
 }
