@@ -8,34 +8,46 @@ import java.util.ArrayList;
  */
 public class TicTacToeFactory implements AbstractGameFactory{
 
+    String gameTitle;
+    int boardWidth, boardHeight;
+    int rows = 8, cols = 8;
+    Color primary, alternate;
+
+    TicTacToeFactory()  {
+        gameTitle = "Tic Tac Toe";
+        boardWidth = 450;
+        boardHeight = 450;
+        rows = 3;
+        cols = 3;
+        primary = new Color(35,180,170);
+        alternate = new Color(30,140,135);
+    }
+
+    @Override
+    public String getGameTitle() {
+        return gameTitle;
+    }
+
+    @Override
+    public Dimension getDimension() {
+        return new Dimension(boardWidth, boardHeight);
+    }
+
     @Override
     public GameBoard createGameBoard() {
-        GameBoard tttBoard = new GameBoard(450, 450, 3, 3,
-                new Color(30,140,135), new Color(30,140,135), "Tic Tac Toe");
-        tttBoard.addTicTacToeBorders();
+        GameBoard tttBoard = new GameBoard(boardWidth, boardHeight, rows, cols, primary, alternate, gameTitle);
         return tttBoard;
     }
 
     @Override
-    public ArrayList<ImageIcon> loadImages() {
-
-//        ImageIcon lightX = new ImageIcon("C:\\Users\\ACKD151\\IdeaProjects\\GitHub\\ClientServerBoardGame\\BoardStuff\\Images\\LightX.png");
-//        ImageIcon lightO = new ImageIcon("C:\\Users\\ACKD151\\IdeaProjects\\GitHub\\ClientServerBoardGame\\BoardStuff\\Images\\LightO.png");
-        ImageIcon darkO = new ImageIcon("C:\\Users\\ACKD151\\IdeaProjects\\GitHub\\ClientServerBoardGame\\BoardStuff\\Images\\DarkO.png");
-        ImageIcon darkX = new ImageIcon("C:\\Users\\ACKD151\\IdeaProjects\\GitHub\\ClientServerBoardGame\\BoardStuff\\Images\\DarkX.png");
-
-        ArrayList<ImageIcon> images = new ArrayList<>(4);
-//        images.add(lightX);
-//        images.add(lightO);
-        images.add(darkX);
-        images.add(darkO);
-
-        return images;
+    public void loadImages(Player goesFirst, Player two) {
+        goesFirst.playerPieces.add(new ImageIcon("Images/LightX.png"));
+        goesFirst.playerPieces.add(new ImageIcon("Images/DarkX.png"));
+        two.playerPieces.add(new ImageIcon("Images/LightO.png"));
+        two.playerPieces.add(new ImageIcon("Images/darkO.png"));
     }
 
     @Override
-    public void setUpBoard(GameBoard board, ArrayList<ImageIcon> pieces) {
-
-    }
+    public void setInitOwnership(GameBoard board, Player client, Player opponent) {}
 
 }

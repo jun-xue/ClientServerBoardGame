@@ -1,12 +1,13 @@
-import javax.swing.*;
-import java.util.ArrayList;
+import java.awt.*;
 
 /**
  * @author Daniel Ackerman 23104834
  * @version 0.1.0, 3/10/2017
  */
 public interface AbstractGameFactory {
+    String getGameTitle();
+    Dimension getDimension();
     GameBoard createGameBoard();
-    ArrayList<ImageIcon> loadImages();
-    void setUpBoard(GameBoard board, ArrayList<ImageIcon> pieces);
+    void loadImages(Player goesFirst, Player two);
+    void setInitOwnership(GameBoard board, Player client, Player opponent);
 }

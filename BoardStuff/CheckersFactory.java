@@ -8,51 +8,82 @@ import java.util.ArrayList;
  */
 public class CheckersFactory implements AbstractGameFactory{
 
+    String gameTitle;
+    int boardWidth, boardHeight;
+    int rows = 8, cols = 8;
+    Color primary, alternate;
+
+    CheckersFactory()   {
+        gameTitle = "Checkers";
+        boardWidth = 600;
+        boardHeight = 600;
+        rows = 8;
+        cols = 8;
+        primary = new Color(240,220,130);
+        alternate = new Color(76,105,67);
+    }
+
+    @Override
+    public String getGameTitle() {
+        return gameTitle;
+    }
+
     @Override
     public GameBoard createGameBoard() {
-        return new GameBoard(600, 600, 8, 8,
-                new Color(240,220,130), new Color(76,105,67), "Checkers");
+        return new GameBoard(boardWidth, boardHeight, rows, cols, primary, alternate, gameTitle);
     }
 
     @Override
-    public ArrayList<ImageIcon> loadImages() {
+    public void loadImages(Player goesFirst, Player follow) {
         //read in and scale images.
-        ImageIcon redChecker = new ImageIcon(new ImageIcon(
-                "C:\\Users\\ACKD151\\workspace\\122_Final_Project\\src\\Images\\redChecker.png")
+        ImageIcon redChecker = new ImageIcon(new ImageIcon("images/redChecker.png")
                 .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
-        ImageIcon whiteChecker = new ImageIcon(new ImageIcon(
-                "C:\\Users\\ACKD151\\workspace\\122_Final_Project\\src\\Images\\whiteChecker.png")
+        goesFirst.playerPieces.add(redChecker);
+        ImageIcon redKing = new ImageIcon(new ImageIcon("images/redKing.png")
                 .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
-
-        ArrayList<ImageIcon> images = new ArrayList<>(4);
-        images.add(redChecker);
-        images.add(whiteChecker);
-//        images.add(redKing);
-//        images.add(whiteKing);
-        return images;
+        goesFirst.playerPieces.add(redKing);
+        ImageIcon whiteChecker = new ImageIcon(new ImageIcon("images/whiteChecker.png")
+                .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
+        follow.playerPieces.add(whiteChecker);
+        ImageIcon whiteKing = new ImageIcon(new ImageIcon("images/whiteKing.png")
+                .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
+        follow.playerPieces.add(whiteKing);
     }
 
     @Override
-    public void setUpBoard(GameBoard board, ArrayList<ImageIcon> pieces) {
+    public void setInitOwnership(GameBoard board, Player client, Player opponent) {
         for (Tile[] tt : board.boardMatrix) {
             for (Tile t : tt)   {
                 if ((t.getRow() == 0 || t.getRow() == 2) && (t.getColumn() % 2 != 0)) {
-                    t.addPiece(pieces.get(0));
+                    t.setOwner(opponent);
+                    opponent.addTile(t);
+                    t.addPiece(opponent.playerPieces.get(0));
                 }
                 if (t.getRow() == 1 && (t.getColumn() % 2 == 0)) {
-                    t.addPiece(pieces.get(0));
+                    t.setOwner(opponent);
+                    opponent.addTile(t);
+                    t.addPiece(opponent.playerPieces.get(0));
                 }
             }
         }
         for (Tile[] tt : board.boardMatrix) {
             for (Tile t : tt)   {
                 if ((t.getRow() == 5 || t.getRow() == 7) && (t.getColumn() % 2 == 0)) {
-                    t.addPiece(pieces.get(1));
+                    t.setOwner(client);
+                    client.addTile(t);
+                    t.addPiece(client.playerPieces.get(0));
                 }
                 if (t.getRow() == 6 && (t.getColumn() % 2 != 0)) {
-                    t.addPiece(pieces.get(1));
+                    t.setOwner(client);
+                    client.addTile(t);
+                    t.addPiece(client.playerPieces.get(0));
                 }
             }
         }
+    }
+
+    @Override
+    public Dimension getDimension() {
+        return new Dimension(boardWidth, boardHeight);
     }
 }
