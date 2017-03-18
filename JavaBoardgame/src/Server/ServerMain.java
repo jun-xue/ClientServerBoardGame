@@ -92,8 +92,9 @@ public class ServerMain
 							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
 							sendPacketToClient(outPacket);
 							
-							System.out.println("New user " + account.username + "has connected with " + account.wins + " wins and " + account.loses + "loses!");
+							System.out.println("New user " + account.username + " has connected with " + account.wins + " wins and " + account.loses + "loses!\n");
 							account = (Player)packetIn.getPayload();
+							usernames.add(account.username);
 							received = true;
 						}
 					}
@@ -108,15 +109,15 @@ public class ServerMain
 							sendPacketToClient(outPacket);
 							
 							account = (Player)packetIn.getPayload();
+							usernames.add(account.username);
 							
-							System.out.println("User " + account.username + "has connected with " + account.wins + " wins and " + account.loses + "loses!");
+							System.out.println("User " + account.username + " has connected with " + account.wins + " wins and " + account.loses + "loses!\n");
 							received = true;
 						}
 						else // the name either doesn't exist or had the wrong password
 						{
 							ServerObject outPacket = new ServerObject("INVALID", null, null);
 							sendPacketToClient(outPacket);
-							
 							System.out.println("Account invalid");
 						}
 					}
@@ -139,7 +140,7 @@ public class ServerMain
 				outputStreams.add(oos);
 				
 				// Notify all users of someone joining the server.
-				sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + account.username + " has joined the server!"));
+				sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + account.username + " has joined the server!\n"));
 								
 				//The while loop that takes all requests
 				while(true)
@@ -200,8 +201,11 @@ public class ServerMain
 			}
 			finally
 			{
-				usernames.remove(account.username);
-				outputStreams.remove(oos);
+				if(account != null || oos != null)
+				{
+					usernames.remove(account.username);
+					outputStreams.remove(oos);
+				}
 				
 				try 
 				{

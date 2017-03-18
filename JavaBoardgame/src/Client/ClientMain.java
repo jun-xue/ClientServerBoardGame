@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import Server.Player;
 import Server.ServerObject;
+import UI.LoadInUI;
 
 public class ClientMain 
 {
@@ -21,7 +22,7 @@ public class ClientMain
 	private String[] usernameList;
 	private String[] roomList;
 	private Player account;
-	//private LoadInUI loadInUI;
+	private LoadInUI loadInUI;
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException
 	{
@@ -29,17 +30,15 @@ public class ClientMain
 		int portNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Server IP the Server is running on"));
 		
 		ClientMain client = new ClientMain(serverName, portNumber);
-		//client.loadInUI.setVisible(true);
+		client.loadInUI.setVisible(true);
 		client.run();
 	}
 	public ClientMain(String server, int port)
 	{
 		this.server = server;
 		this.port = port;
-		//loadInUI = new LoadInUI();
-		
-		//make ui for the screen that opens when you load in
-		//make it in a new class
+		loadInUI = new LoadInUI();
+
 		//make action listoners for the loadInUI stuff here
 		
 	}
@@ -94,7 +93,7 @@ public class ClientMain
 			}
 			else if (packetIn.getHeader().equals("MESSAGE"))
 			{
-				//loadInUI.textfield.append(packetIn.getPayload.toString());
+				loadInUI.message.append(packetIn.getPayload().toString());
 			}
 			else if (packetIn.getHeader().equals("CONNECTTOROOM"))
 			{
