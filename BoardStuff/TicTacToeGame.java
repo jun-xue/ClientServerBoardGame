@@ -7,15 +7,15 @@ import javax.swing.ImageIcon;
  * @version 0.1.0, 3/5/17
  */
 public class TicTacToeGame extends Game {
+
     String currentPlayer="Player2";
     String Player1="Player1";
     String Player2="Player2";
     Boolean redoMove=false;
 
-    TicTacToeGame() {
-        super(new TicTacToeFactory());
+    TicTacToeGame(AbstractGameFactory tttgf)   {
+        super("TicTacToe", tttgf);
     }
-
 
     public boolean checkWinner(){
         return   ((board.boardMatrix[0][0].getOwned()!=null && board.boardMatrix[0][0].getOwned()==board.boardMatrix[0][1].getOwned() && board.boardMatrix[0][0].getOwned()==board.boardMatrix[0][2].getOwned())

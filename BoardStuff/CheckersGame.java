@@ -9,8 +9,8 @@ import java.util.ArrayList;
  */
 public class CheckersGame extends Game  {
 
-    CheckersGame()   {
-        super(new CheckersFactory());
+    CheckersGame(AbstractGameFactory cgf)   {
+        super("Checkers", cgf);
     }
 
     @Override
@@ -44,14 +44,14 @@ public class CheckersGame extends Game  {
         return null;
     }
 
-    @Override
-    protected void runGame() {
-        while (!state.gameOver)  {
-            for (Tile[] tt : board.boardMatrix)    {
-                for (Tile t : tt)   {
-                    t.setBorder(BorderFactory.createEmptyBorder());
-                }
-            }
-        }
-    }
+//    @Override
+//    protected void runGame() {
+//        while (!state.gameOver)  {
+//            for (Tile[] tt : board.boardMatrix)    {
+//                for (Tile t : tt)   {
+//                    t.setBorder(BorderFactory.createEmptyBorder());
+//                }
+//            }
+//        }
+//    }
 }

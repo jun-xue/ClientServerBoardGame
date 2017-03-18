@@ -1,5 +1,3 @@
-import com.sun.jmx.remote.internal.ArrayQueue;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
@@ -19,8 +17,8 @@ public abstract class Game extends JFrame implements MouseListener  {
     Queue<Player> playerQueue;
     GameState state;
 
-    Game(AbstractGameFactory factory) {
-        super(factory.getGameTitle());    //super is JFrame
+    Game(String gameTitle, AbstractGameFactory factory) {
+        super(gameTitle);    //super is JFrame
         agf = factory;
         createPlayers();    //creates a client and a component
         isTurn = client;
@@ -32,11 +30,13 @@ public abstract class Game extends JFrame implements MouseListener  {
         playerQueue.add(isTurn);
         playerQueue.add(opponent);
 
-        setSize(agf.getDimension());
+        Dimension desiredFrameSize = agf.getDimension();
+        setMinimumSize(desiredFrameSize);
+        setMaximumSize(desiredFrameSize);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initializeGameState();
         add(board);
-        pack();
+       // pack();
         setVisible(true);
     }
 
@@ -65,7 +65,7 @@ public abstract class Game extends JFrame implements MouseListener  {
         Player isUp;
         while (!state.gameOver) {
             isUp = playerQueue.remove();
-            isUp.getAvailableMoves();
+            agf.hiLiteAvailableMoves(isUp.getAvailableMoves());
             isUp.makeLegalMove();
             playerQueue.add(isUp);
             //gameState.update();

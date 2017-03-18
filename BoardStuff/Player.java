@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -26,7 +25,7 @@ class Player {
     }
 
     ArrayList<Tile> getAvailableMoves()    {
-        //Flip for different sides of baord (make red/black player side???
+        //Flip for different sides of board (make red/black player side???
         ArrayList<Tile> movable = new ArrayList<>();
         for (Tile check : myTiles)  {
             int checksRow = check.getRow(), checksColumn = check.getColumn();
@@ -39,6 +38,8 @@ class Player {
     }
 
     void makeLegalMove()    {
+        Scanner sc = new Scanner(System.in);
+        sc.nextLine();
     }
 
     public void addTile(Tile mine)  {

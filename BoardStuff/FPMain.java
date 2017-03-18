@@ -6,10 +6,12 @@ public class FPMain {
 
     public static void main(String[] args)  {
 
-//        Game checkersGame = new CheckersGame();
-//        checkersGame.runGame();
-        Game tictactoe = new TicTacToeGame();
-        tictactoe.runGame();
+        AbstractGameFactory agf = new CheckersFactory();
+        Game checkersGame = agf.createGame(agf);
+        checkersGame.runGame();
+//        AbstractGameFactory tttgf = new TicTacToeFactory();
+//        Game tictactoe = tttgf.createGame(tttgf);
+//        tictactoe.runGame();
     }
 
 }

@@ -24,8 +24,8 @@ public class TicTacToeFactory implements AbstractGameFactory{
     }
 
     @Override
-    public String getGameTitle() {
-        return gameTitle;
+    public Game createGame(AbstractGameFactory abf) {
+        return new TicTacToeGame(abf);
     }
 
     @Override
@@ -49,5 +49,10 @@ public class TicTacToeFactory implements AbstractGameFactory{
 
     @Override
     public void setInitOwnership(GameBoard board, Player client, Player opponent) {}
+
+    @Override
+    public void hiLiteAvailableMoves(ArrayList<Tile> canMove) {
+
+    }
 
 }

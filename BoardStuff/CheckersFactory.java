@@ -24,8 +24,8 @@ public class CheckersFactory implements AbstractGameFactory{
     }
 
     @Override
-    public String getGameTitle() {
-        return gameTitle;
+    public Game createGame(AbstractGameFactory abf) {
+        return new CheckersGame(abf);
     }
 
     @Override
@@ -79,6 +79,13 @@ public class CheckersFactory implements AbstractGameFactory{
                     t.addPiece(client.playerPieces.get(0));
                 }
             }
+        }
+    }
+
+    @Override
+    public void hiLiteAvailableMoves(ArrayList<Tile> canMove) {
+        for (Tile t : canMove)  {
+            t.setBorder(BorderFactory.createLineBorder(Color.cyan, 3));
         }
     }
 
