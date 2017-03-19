@@ -1,5 +1,6 @@
-package BoardStuff;
+package Games;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
@@ -7,16 +8,16 @@ import javax.swing.ImageIcon;
  * @author Daniel Ackerman 23104834
  * @version 0.1.0, 3/5/17
  */
-public class TicTacToeGame extends Game {
+public class TicTacToeGame extends Game implements MouseListener{
+
     String currentPlayer="Player2";
     String Player1="Player1";
     String Player2="Player2";
     Boolean redoMove=false;
 
-    public TicTacToeGame() {
-        super(new TicTacToeFactory());
+    TicTacToeGame(AbstractGameFactory tttgf)   {
+        super("TicTacToe", tttgf);
     }
-
 
     public boolean checkWinner(){
         return   ((board.boardMatrix[0][0].getOwned()!=null && board.boardMatrix[0][0].getOwned()==board.boardMatrix[0][1].getOwned() && board.boardMatrix[0][0].getOwned()==board.boardMatrix[0][2].getOwned())
@@ -106,13 +107,9 @@ public class TicTacToeGame extends Game {
 
     }
 
-    @Override
-    protected ArrayList<Tile> availableMoves(Player isUp) {
-        return null;
-    }
 
     @Override
-    protected void runGame() {
+    public void runGame() {
 
     }
 }

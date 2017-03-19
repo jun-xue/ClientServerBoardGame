@@ -1,5 +1,4 @@
-package BoardStuff;
-
+package Games;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,8 +25,8 @@ public class CheckersFactory implements AbstractGameFactory{
     }
 
     @Override
-    public String getGameTitle() {
-        return gameTitle;
+    public Game createGame(AbstractGameFactory abf) {
+        return new CheckersGame(abf);
     }
 
     @Override
