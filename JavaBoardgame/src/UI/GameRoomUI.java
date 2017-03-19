@@ -24,9 +24,9 @@ public class GameRoomUI extends JFrame
 	public JButton leave;
 	public GameRoomUI()
 	{
-		setUndecorated(true);
+		//setUndecorated(true);
 		setTitle("Challenger Game");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 900, 900);
 		setResizable(false);
 		getContentPane().setLayout(null);
