@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
@@ -30,14 +31,21 @@ public class ClientMain
 	private Player account;
 	private LoadInUI loadInUI;
 	
-	public static void main(String[] args) throws IOException, ClassNotFoundException
+	public static void main(String[] args) throws IOException, ClassNotFoundException, SocketException, NumberFormatException
 	{
-		String serverName = JOptionPane.showInputDialog("Enter Server IP address:");
-		int portNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Server port number#:"));
+		try{
+		String serverName = JOptionPane.showInputDialog("Enter Server IP address (Default: localhost):");
+		int portNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Server port number (Default: 42069):"));
 		
 		ClientMain client = new ClientMain(serverName, portNumber);
 		client.loadInUI.setVisible(true);
 		client.run();
+		} catch (SocketException se){ 
+			System.out.println("Invalid socket is entered, error: " + se);
+		} catch (NumberFormatException ne){
+			System.out.println("Please enter the socket numbers, error: " + ne);
+		}
+		
 	}
 	public ClientMain(String server, int port)
 	{
@@ -45,7 +53,7 @@ public class ClientMain
 		this.port = port;
 		loadInUI = new LoadInUI();
 
-		//make action listoners 
+		//make action listeners 
 		loadInUI.text.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -209,7 +217,7 @@ public class ClientMain
 		//this will create the new window and display everything
 		oosRoom = new ObjectOutputStream(socket.getOutputStream());
 		oisRoom = new ObjectInputStream(socket.getInputStream());
-		//make the listners and all that shit in here, including sending stuff to the GameRoomServer
+		//make the listeners in here, including sending stuff to the GameRoomServer
 		newRoom.text.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				try 
