@@ -32,8 +32,8 @@ public class ClientMain
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException
 	{
-		String serverName = JOptionPane.showInputDialog("Enter Server IP the Server is running on");
-		int portNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Server IP the Server is running on"));
+		String serverName = JOptionPane.showInputDialog("Enter Server IP address:");
+		int portNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Server port number#:"));
 		
 		ClientMain client = new ClientMain(serverName, portNumber);
 		client.loadInUI.setVisible(true);
