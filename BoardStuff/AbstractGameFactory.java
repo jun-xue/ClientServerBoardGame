@@ -11,5 +11,4 @@ public interface AbstractGameFactory {
     GameBoard createGameBoard();
     void loadImages(Player goesFirst, Player two);
     void setInitOwnership(GameBoard board, Player client, Player opponent);
-    void hiLiteAvailableMoves(ArrayList<Tile> canMove);
 }

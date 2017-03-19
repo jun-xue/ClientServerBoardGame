@@ -1,4 +1,5 @@
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
@@ -6,7 +7,7 @@ import javax.swing.ImageIcon;
  * @author Daniel Ackerman 23104834
  * @version 0.1.0, 3/5/17
  */
-public class TicTacToeGame extends Game {
+public class TicTacToeGame extends Game implements MouseListener{
 
     String currentPlayer="Player2";
     String Player1="Player1";
@@ -105,13 +106,9 @@ public class TicTacToeGame extends Game {
 
     }
 
-    @Override
-    protected ArrayList<Tile> availableMoves(Player isUp) {
-        return null;
-    }
 
     @Override
-    protected void runGame() {
+    public void runGame() {
 
     }
 }

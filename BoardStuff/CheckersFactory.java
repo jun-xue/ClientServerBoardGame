@@ -83,13 +83,6 @@ public class CheckersFactory implements AbstractGameFactory{
     }
 
     @Override
-    public void hiLiteAvailableMoves(ArrayList<Tile> canMove) {
-        for (Tile t : canMove)  {
-            t.setBorder(BorderFactory.createLineBorder(Color.cyan, 3));
-        }
-    }
-
-    @Override
     public Dimension getDimension() {
         return new Dimension(boardWidth, boardHeight);
     }

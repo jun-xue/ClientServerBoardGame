@@ -50,9 +50,5 @@ public class TicTacToeFactory implements AbstractGameFactory{
     @Override
     public void setInitOwnership(GameBoard board, Player client, Player opponent) {}
 
-    @Override
-    public void hiLiteAvailableMoves(ArrayList<Tile> canMove) {
-
-    }
 
 }

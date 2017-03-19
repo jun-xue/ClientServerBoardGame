@@ -16,6 +16,12 @@ public class GameState implements Serializable {
         gameOver = false;
     }
 
+    GameState(GameState stateIn)    {
+        boardState = stateIn.boardState;
+        isTurn = stateIn.isTurn;
+        gameOver = stateIn.gameOver;
+    }
+
     Tile[][] getState()    {
         return boardState;
     }
