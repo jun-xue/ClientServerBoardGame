@@ -24,9 +24,15 @@ public class CheckersLogic implements MouseListener {
     public CheckersLogic(CheckersGame checkers, GameState state)    {
         this.checkers = checkers;
         this.state = state;
+        this.isTurn = checkers.isTurn;
         grid = checkers.board.boardMatrix;
         canMove = new ArrayList<>();
         legalMoves = new ArrayList<>();
+        for(Tile[] tt : grid)   {
+            for(Tile t : tt)    {
+                t.addMouseListener(this);
+            }
+        }
     }
 
     GameState takeTurn(Player isTurn,GameState state)   {
@@ -43,23 +49,34 @@ public class CheckersLogic implements MouseListener {
         return state;
     }
 
-    boolean getJumps()    {
+    boolean getJumps() {
         canMove.clear();
-        Player opponent = checkers.playerQueue.peek();
         for (Tile t : isTurn.myTiles) {
-            int row = t.getRow();
-            int col = t.getColumn();
-            if (isTurn.starts) {
-                if ((col == 0 && grid[row - 1][col + 1].getOwner() == opponent && grid[row - 2][col + 2].free) ||
-                        (col == 7 && grid[row - 1][col - 1].getOwner() == opponent && grid[row - 2][col - 2].free) ||
-                        (col > 0 && col < 7 && grid[row - 1][col + 1].getOwner() == opponent && grid[row - 2][col + 2].free) ||
-                        (col > 0 && col < 7 && grid[row - 1][col - 1].getOwner() == opponent && grid[row - 2][col - 2].free)) {
-                    canMove.add(t);
-                    t.addMouseListener(this);
-                    return true;
-                }
+            if (canJump(t)) {
+                canMove.add(t);
             }
+        }
+        return !canMove.isEmpty();
+    }
 
+    boolean canJump(Tile t)    {
+        Player opponent = checkers.playerQueue.peek();
+        int row = t.getRow();
+        int col = t.getColumn();
+        if (isTurn.starts) {
+            if ((col==0 && grid[row-1][1].getOwner()==opponent && grid[row-2][2].free) ||
+                    (col==1 && grid[row-1][2].getOwner()==opponent && grid[row-2][3].free)){
+                return true;
+            }
+            if ((col==7 && grid[row-1][6].getOwner()==opponent && grid[row-2][5].free) ||
+                    (col==6 && grid[row-1][5].getOwner()==opponent && grid[row-2][4].free)) {
+                return true;
+            }
+            if ((col>1 && col<6 && grid[row-1][col+1].getOwner()==opponent && grid[row-2][col+2].free) ||
+                    (col>1 && col<6 && grid[row-1][col-1].getOwner()==opponent && grid[row-2][col-2].free)) {
+                return true;
+            }
+            return false;
         }
         return false;
     }
@@ -71,7 +88,6 @@ public class CheckersLogic implements MouseListener {
                 int row = t.getRow(), col = t.getColumn();
                 if (col != 0 && grid[row-1][col-1].free ||
                         col != 7 && grid[row-1][col+1].free) {
-                    t.addMouseListener(this);
                     canMove.add(t);
                 }
             }
@@ -81,7 +97,6 @@ public class CheckersLogic implements MouseListener {
                 int row = t.getRow(), col = t.getColumn();
                 if (col != 0 && grid[row+1][col-1].free ||
                         col != 7 && grid[row+1][col+1].free) {
-                    t.addMouseListener(this);
                     canMove.add(t);
                 }
             }
@@ -90,8 +105,30 @@ public class CheckersLogic implements MouseListener {
 
     void getLegalMoves(Tile from)    {
         legalMoves.clear();
+        Player opponent = checkers.playerQueue.peek();
         int row = from.getRow(), col = from.getColumn();
         if (isTurn.starts)    {
+            if (jump)   {
+                if (col==0 && grid[row-1][1].getOwner()==opponent && grid[row-2][2].free)  {
+                    legalMoves.add(grid[row-2][2]);
+                }
+                if (col==1 && grid[row-1][2].getOwner()==opponent && grid[row-2][3].free)  {
+                    legalMoves.add(grid[row-2][3]);
+                }
+                if (col==6 && grid[row-1][5].getOwner()==opponent && grid[row-2][4].free)   {
+                    legalMoves.add(grid[row-2][4]);
+                }
+                if (col==7 && grid[row-1][6].getOwner()==opponent && grid[row-2][5].free)   {
+                    legalMoves.add(grid[row-2][5]);
+                }
+                if (col>1 && col<6 && grid[row-1][col-1].getOwner()==opponent && grid[row-2][col-2].free)   {
+                    legalMoves.add(grid[row-2][col-2]);
+                }
+                if (col>1 && col<6 && grid[row-1][col+1].getOwner()==opponent && grid[row-2][col+2].free)  {
+                    legalMoves.add(grid[row-2][col+2]);
+                }
+                return;
+            }
             if (col == 0 && grid[row-1][col+1].free)   {
                 legalMoves.add(grid[row-1][col+1]);
             }   else if (col == 7 && grid[row-1][col-1].free)   {
@@ -104,6 +141,7 @@ public class CheckersLogic implements MouseListener {
                     legalMoves.add(grid[row-1][col+1]);
                 }
             }
+            return;
         }
         if (!isTurn.starts)    {
             if (col == 0 && grid[row+1][col+1].free)   {
@@ -118,9 +156,6 @@ public class CheckersLogic implements MouseListener {
                     legalMoves.add(grid[row+1][col+1]);
                 }
             }
-        }
-        for (Tile t : legalMoves)   {
-            t.addMouseListener(this);
         }
     }
 
@@ -144,6 +179,19 @@ public class CheckersLogic implements MouseListener {
         return false;
     }
 
+    void doJump(Tile from, Tile to) {
+        int fromRow = from.getRow(), fromCol = from.getColumn();
+        int toRow = to.getRow(), toCol = to.getColumn();
+        int row = toRow - ((toRow-fromRow)/2);
+        int col = toCol - ((toCol-fromCol)/2);
+        Tile toRemove = grid[row][col];
+        checkers.playerQueue.peek().removeTile(toRemove);
+        JLabel jumped = (JLabel)toRemove.getComponent(0);
+        toRemove.remove(jumped);
+        doMove(from, to);
+        jump = false;
+    }
+
     void doMove(Tile from, Tile to)  {
         JLabel piece = (JLabel)from.getComponent(0);
         from.remove(piece);
@@ -155,16 +203,25 @@ public class CheckersLogic implements MouseListener {
         legalMoves.clear();
         pieceSelected = false;
         moved = true;
+        this.from = null;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         Tile clicked = (Tile)e.getComponent();
         if (!moved) {
+            if (jump && pieceSelected == true && legalMoves.contains(clicked)) {
+                while(getJumps()) {
+                    doJump(from, clicked);
+                }
+                checkers.switchTurn();
+//                checkers.runGame();
+                return;
+            }
             if (pieceSelected == true && legalMoves.contains(clicked)) {
                 doMove(from, clicked);
                 checkers.switchTurn();
-                checkers.runGame();
+//                checkers.runGame();
                 return;
             }
             if (clicked.getOwner() == isTurn && pieceSelected == false) {
