@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -23,6 +24,7 @@ public class GameRoomUI extends JFrame
 	public JButton leave;
 	public GameRoomUI()
 	{
+		setUndecorated(true);
 		setTitle("Challenger Game");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 900, 900);
@@ -41,7 +43,7 @@ public class GameRoomUI extends JFrame
 		getContentPane().add(status);
 		
 		leave = new JButton("X");
-		leave.setBounds(0, 0, 25, 25);
+		leave.setBounds(850, 0, 50, 50);
 		getContentPane().add(leave);
 		
 		gameBoard = new JPanel();
@@ -57,9 +59,9 @@ public class GameRoomUI extends JFrame
 		status.setText(newS);
 	}
 	
-//	public static void main(String args[]) {
-//		GameRoomUI test = new GameRoomUI();
-//		test.setVisible(true);
-//	} 
+	public static void main(String args[]) {
+		GameRoomUI test = new GameRoomUI();
+		test.setVisible(true);
+	} 
 
 }
