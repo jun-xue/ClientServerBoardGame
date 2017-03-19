@@ -42,8 +42,8 @@ public class GameRoomUI extends JFrame
 		status.setBounds(375, 10, 300, 25);
 		getContentPane().add(status);
 		
-		leave = new JButton("X");
-		leave.setBounds(850, 0, 50, 50);
+		leave = new JButton("Exit Game");
+		leave.setBounds(780, 10, 100, 50);
 		getContentPane().add(leave);
 		
 		gameBoard = new JPanel();
@@ -52,6 +52,8 @@ public class GameRoomUI extends JFrame
 		gameBoard.setAlignmentY(CENTER_ALIGNMENT);
 		gameBoard.setBounds(new Rectangle(10,10,700,700));
 		//THIS NEEDS TO BE THE GAME WINDOW 
+		// UPDATE METHOD FOR MOVE NEEDED
+		// ADD GAME GUI HERE //
 	}
 	
 	public void setStatus(String newS)
