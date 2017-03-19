@@ -127,7 +127,7 @@ public class GameRoom
 					}
 					else if (packetIn.getHeader().equals("MOVE"))
 					{
-						//move logic
+			    		((TicTacToeGame) game).canMakeMove(0, 0, packetIn.getSender());
 					}
 					else if (packetIn.getHeader().equals("MESSAGE"))
 					{
