@@ -7,9 +7,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 
-import BoardStuff.ChessGame;
+import Games.AbstractGameFactory;
 import Games.CheckersGame;
 import Games.Game;
+import Games.TicTacToeFactory;
 import Games.TicTacToeGame;
 
 public class GameRoom 
@@ -21,7 +22,7 @@ public class GameRoom
     public int maxPlayers = 2;
     public int currentPlayers = 0;
     
-    // private gameFactory
+    private AbstractGameFactory gameFactory;
     private Game game;
     
     public ServerSocket socket;
@@ -38,17 +39,18 @@ public class GameRoom
     	if (gameNumber == 0)
     	{
     		//tictactoe
-    		game = new TicTacToeGame();
+    		gameFactory = new TicTacToeFactory();
+    		game = new TicTacToeGame(gameFactory);
     	}
     	else if (gameNumber == 1)
     	{
     		//chess
-    		game = new ChessGame();
+    		//game = new ChessGame();
     	}
     	else if (gameNumber == 2)
     	{
     		//checkers
-    		game = new CheckersGame();
+    		//game = new CheckersGame();
     	}
     	socket = new ServerSocket(0); // using 0 will just assign it to an unused one.
     	port = socket.getLocalPort();

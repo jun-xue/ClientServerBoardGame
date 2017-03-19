@@ -14,7 +14,7 @@ public class TicTacToeFactory implements AbstractGameFactory{
     int rows = 8, cols = 8;
     Color primary, alternate;
 
-    TicTacToeFactory()  {
+    public TicTacToeFactory()  {
         gameTitle = "Tic Tac Toe";
         boardWidth = 450;
         boardHeight = 450;
