@@ -41,10 +41,15 @@ public class TicTacToeFactory implements AbstractGameFactory{
 
     @Override
     public void loadImages(Player goesFirst, Player two) {
-        goesFirst.playerPieces.add(new ImageIcon("Images/LightX.png"));
-        goesFirst.playerPieces.add(new ImageIcon("Images/DarkX.png"));
-        two.playerPieces.add(new ImageIcon("Images/LightO.png"));
-        two.playerPieces.add(new ImageIcon("Images/darkO.png"));
+        goesFirst.playerPieces.add(new ImageIcon(new ImageIcon("Images/LightX.png")
+                .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+//        goesFirst.playerPieces.add(new ImageIcon(new ImageIcon("Images/DarkX.png")
+//                .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+        two.playerPieces.add(new ImageIcon(new ImageIcon("Images/LightO.png")
+                .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+//        two.playerPieces.add(new ImageIcon(new ImageIcon("Images/darkO.png")
+//                .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+
     }
 
     @Override

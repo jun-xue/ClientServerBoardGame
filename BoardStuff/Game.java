@@ -20,7 +20,7 @@ public abstract class Game extends JFrame {
         super(gameTitle);    //super is JFrame
         agf = factory;
         board = agf.createGameBoard();
-        createPlayers();    //creates a client and a component
+        createPlayers();    //creates a client and a opponent
         isTurn = client;
         agf.loadImages(client, opponent);
         agf.setInitOwnership(board, client, opponent);
@@ -41,6 +41,11 @@ public abstract class Game extends JFrame {
         client      = new Player("Self");
         client.starts = true;
         opponent    = new Player("Enemy");
+    }
+
+    void switchTurn()   {
+        playerQueue.add(isTurn);
+        isTurn = playerQueue.remove();
     }
 
     void initializeGameState()  {
