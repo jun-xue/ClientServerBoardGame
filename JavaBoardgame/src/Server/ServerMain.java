@@ -1,5 +1,6 @@
 package Server;
 
+import java.awt.List;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,6 +36,7 @@ public class ServerMain
 		}
 		finally
 		{
+			Player.saveAccounts();
 			ss.close();
 		}
 	}
@@ -89,11 +91,10 @@ public class ServerMain
 							Player.putNewAccount((Player)packetIn.getPayload());
 							Player.saveAccounts();
 							
-							ServerObject outPacket = new ServerObject("VALID", null, null);
+							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
 							sendPacketToClient(outPacket);
-							
-							System.out.println("New user " + account.username + "has connected with " + account.wins + " wins and " + account.loses + "loses!");
 							account = (Player)packetIn.getPayload();
+							System.out.println("New user " + account.username + " has connected with " + account.wins + " wins and " + account.loses + " loses!\n");
 							received = true;
 						}
 					}
@@ -104,19 +105,18 @@ public class ServerMain
 						
 						if (Player.checkForAccount((Player)packetIn.getPayload()) == true && Player.checkPassword((Player)packetIn.getPayload()) == true) // if the name does exist and the password is right
 						{
-							ServerObject outPacket = new ServerObject("VALID", null, null);
+							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
 							sendPacketToClient(outPacket);
 							
 							account = (Player)packetIn.getPayload();
 							
-							System.out.println("User " + account.username + "has connected with " + account.wins + " wins and " + account.loses + "loses!");
+							System.out.println("User " + account.username + " has connected with " + account.wins + " wins and " + account.loses + " loses!\n");
 							received = true;
 						}
 						else // the name either doesn't exist or had the wrong password
 						{
 							ServerObject outPacket = new ServerObject("INVALID", null, null);
 							sendPacketToClient(outPacket);
-							
 							System.out.println("Account invalid");
 						}
 					}
@@ -126,22 +126,22 @@ public class ServerMain
 					{		
 						synchronized (usernames)
 						{
-							if (!usernames.contains(packetIn.getPayload().toString()))
+							if (!usernames.contains(account.username))
 							{
-								usernames.add(packetIn.getPayload().toString());
+								usernames.add(account.username);
 								break;
 							}
 						}
 					}
 				}
 				
-				// Since the Name is Accepted, send an okay to the server.
-				sendPacketToClient(new ServerObject("NAMEACCEPTED", "Server", null));
+				// Since the Name is Accepted, send an okay to the clients.
 				outputStreams.add(oos);
 				
 				// Notify all users of someone joining the server.
-				sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + account.username + " has joined the server!"));
-								
+				sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + account.username + " has joined the server!\n"));
+				sendPacketToAllClients(new ServerObject("UPDATEPLAYERS", "Server", usernames.toArray(new String[usernames.size()])));
+				
 				//The while loop that takes all requests
 				while(true)
 				{
@@ -156,13 +156,87 @@ public class ServerMain
 					// The Request to make a room
 					else if(packetIn.getHeader().equals("MAKEROOM"))
 					{
+						GameRoom newRoom;
+						//payload[0] == room name
+						//payload[1] == gametype
+						synchronized (gameRoomsList) 
+						{
+							newRoom = new GameRoom(((String[])packetIn.getPayload())[0]);
+							newRoom.setUpGame(Integer.parseInt(((String[])packetIn.getPayload())[1]));
+							gameRoomsList.add(newRoom);
+						}
+						ServerSocket gameSocket = new ServerSocket(0);
+						newRoom.port = gameSocket.getLocalPort();
+						newRoom.createGameServer(gameSocket, account);
+						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", newRoom.port));
+						
 						
 					}
 					
 					// The Request to join a room
 					else if(packetIn.getHeader().equals("JOINROOM"))
 					{
+						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", gameRoomsList.get((int) packetIn.getPayload()).port));
+
+					
+					}
+					else if(packetIn.getHeader().equals("REFRESHPLAYERS"))
+					{
+						ArrayList<String> names = new ArrayList<String>();
+						for(String name: usernames) 
+						{ 
+							names.add(name);
+						}
 						
+						sendPacketToClient(new ServerObject("UPDATEPLAYERS", "Server", names.toArray(new String[names.size()])));
+					}
+					
+					else if(packetIn.getHeader().equals("REFRESHGAMES"))
+					{
+						ArrayList<String> rooms = new ArrayList<String>();
+						synchronized (gameRoomsList) 
+						{
+							ArrayList<Integer> removeThese = new ArrayList<Integer>();
+							for(GameRoom room: gameRoomsList) 
+							{
+								if(room.currentPlayers == room.maxPlayers ) 
+								{
+									removeThese.add(gameRoomsList.indexOf(room));
+								}
+								if(room.currentPlayers == 0)
+								{
+									removeThese.add(gameRoomsList.indexOf(room));
+								}
+							}
+							for(int index : removeThese) 
+							{
+								gameRoomsList.remove(index);
+							}
+							
+							if (gameRoomsList.size() != 0)
+							{
+								for(GameRoom name: gameRoomsList) 
+								{ 
+									rooms.add(name.roomName);
+								}
+							}
+							sendPacketToClient(new ServerObject("UPDATEROOMS", "Server", rooms.toArray(new String[rooms.size()])));
+						}
+					}
+					synchronized (gameRoomsList) 
+					{
+						ArrayList<Integer> removeThese = new ArrayList<Integer>();
+						for(GameRoom room: gameRoomsList) 
+						{
+							if(room.currentPlayers == room.maxPlayers) 
+							{
+								removeThese.add(gameRoomsList.indexOf(room));
+							}
+						}
+						for(int index : removeThese) 
+						{
+							gameRoomsList.remove(index);
+						}
 					}
 				}	
 			} 
@@ -176,11 +250,15 @@ public class ServerMain
 			}
 			finally
 			{
-				usernames.remove(account.username);
-				outputStreams.remove(oos);
+				if(account.username != null || oos != null)
+				{
+					usernames.remove(account.username);
+					outputStreams.remove(oos);
+				}
 				
 				try 
 				{
+					Player.saveAccounts();
 					socket.close();
 				} 
 				catch (IOException e) 

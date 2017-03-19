@@ -2,6 +2,9 @@ package client;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
@@ -41,6 +44,15 @@ public class HomeScreen extends JFrame {
 		setBounds(100, 100, 900, 600);
 		setResizable(false);
 		getContentPane().setLayout(null);
+		// Menu options
+		JMenuBar menuBar = new JMenuBar();
+		JMenu menuOption = new JMenu("Option");
+		JMenuItem exit = new JMenuItem("Exit");
+		exit.addActionListener(new exitApp());
+		menuOption.add(exit);
+		menuBar.add(menuOption);
+		setJMenuBar(menuBar);
+		
 		
 		//Chat Interface
 		JLabel chatLabel = new JLabel("Chat");
@@ -125,6 +137,16 @@ public class HomeScreen extends JFrame {
 					"Name of the Game Room").replace(' ', '_')) + " ";
 		}
 		
+	}
+	
+	// action listener for exiting program
+	static class exitApp implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			System.exit(0);
+			
+		}
 	}
 	
 	//Uncomment main to test the screen
