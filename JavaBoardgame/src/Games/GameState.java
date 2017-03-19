@@ -1,5 +1,4 @@
-package BoardStuff;
-
+package Games;
 import java.io.Serializable;
 
 /**
@@ -16,6 +15,12 @@ public class GameState implements Serializable {
         boardState = initState;
         this.isTurn = isTurn;
         gameOver = false;
+    }
+
+    GameState(GameState stateIn)    {
+        boardState = stateIn.boardState;
+        isTurn = stateIn.isTurn;
+        gameOver = stateIn.gameOver;
     }
 
     Tile[][] getState()    {

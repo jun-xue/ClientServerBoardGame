@@ -7,10 +7,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 
-import BoardStuff.CheckersGame;
 import BoardStuff.ChessGame;
-import BoardStuff.Game;
-import BoardStuff.TicTacToeGame;
+import Games.CheckersGame;
+import Games.Game;
+import Games.TicTacToeGame;
 
 public class GameRoom 
 {

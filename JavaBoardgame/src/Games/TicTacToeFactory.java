@@ -1,5 +1,4 @@
-package BoardStuff;
-
+package Games;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,8 +25,8 @@ public class TicTacToeFactory implements AbstractGameFactory{
     }
 
     @Override
-    public String getGameTitle() {
-        return gameTitle;
+    public Game createGame(AbstractGameFactory abf) {
+        return new TicTacToeGame(abf);
     }
 
     @Override
@@ -51,5 +50,6 @@ public class TicTacToeFactory implements AbstractGameFactory{
 
     @Override
     public void setInitOwnership(GameBoard board, Player client, Player opponent) {}
+
 
 }
