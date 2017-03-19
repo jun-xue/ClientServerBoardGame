@@ -13,7 +13,7 @@ public class TicTacToeGame extends Game {
     String Player2="Player2";
     Boolean redoMove=false;
 
-    TicTacToeGame() {
+    public TicTacToeGame() {
         super(new TicTacToeFactory());
     }
 

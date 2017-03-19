@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class CheckersGame extends Game  {
 
-    CheckersGame()   {
+    public CheckersGame()   {
         super(new CheckersFactory());
     }
 

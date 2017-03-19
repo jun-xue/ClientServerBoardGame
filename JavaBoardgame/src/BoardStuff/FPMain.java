@@ -12,6 +12,7 @@ public class FPMain {
 //        checkersGame.runGame();
         Game tictactoe = new TicTacToeGame();
         tictactoe.runGame();
+        System.out.println(tictactoe.board);
     }
 
 }

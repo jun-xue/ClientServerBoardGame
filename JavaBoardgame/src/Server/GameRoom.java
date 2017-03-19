@@ -7,6 +7,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 
+import BoardStuff.CheckersGame;
+import BoardStuff.ChessGame;
+import BoardStuff.Game;
+import BoardStuff.TicTacToeGame;
+
 public class GameRoom 
 {
 	private HashSet<String> usernames = new HashSet<String>();
@@ -17,7 +22,7 @@ public class GameRoom
     public int currentPlayers = 0;
     
     // private gameFactory
-    // private game
+    private Game game;
     
     public ServerSocket socket;
     public int port;
@@ -30,7 +35,21 @@ public class GameRoom
     
     public void setUpGame(int gameNumber) throws IOException
     {
-    	//game = gameFactory.createGame(gameNumber);
+    	if (gameNumber == 0)
+    	{
+    		//tictactoe
+    		game = new TicTacToeGame();
+    	}
+    	else if (gameNumber == 1)
+    	{
+    		//chess
+    		game = new ChessGame();
+    	}
+    	else if (gameNumber == 2)
+    	{
+    		//checkers
+    		game = new CheckersGame();
+    	}
     	socket = new ServerSocket(0); // using 0 will just assign it to an unused one.
     	port = socket.getLocalPort();
     }
