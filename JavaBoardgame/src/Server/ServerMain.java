@@ -199,7 +199,11 @@ public class ServerMain
 							ArrayList<Integer> removeThese = new ArrayList<Integer>();
 							for(GameRoom room: gameRoomsList) 
 							{
-								if(room.currentPlayers == room.maxPlayers) 
+								if(room.currentPlayers == room.maxPlayers ) 
+								{
+									removeThese.add(gameRoomsList.indexOf(room));
+								}
+								if(room.currentPlayers == 0)
 								{
 									removeThese.add(gameRoomsList.indexOf(room));
 								}

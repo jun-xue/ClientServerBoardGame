@@ -118,6 +118,8 @@ public class GameRoom
 					{
 						//award win to other player
 						sendPacketToAllClients(new ServerObject("FINISHED", "Server", null));
+						currentPlayers = 0;
+						break;
 					}
 				}
 				
@@ -137,7 +139,6 @@ public class GameRoom
 				try
 				{
 					s.close();
-					sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Challenger " + acc.username + " has joined the server!"));
 				}
 				catch (IOException e)
 				{
