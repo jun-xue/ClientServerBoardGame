@@ -15,6 +15,7 @@ import javax.swing.border.BevelBorder;
 import Games.AbstractGameFactory;
 import Games.Game;
 import Games.TicTacToeFactory;
+import Games.Tile;
 
 public class GameRoomUI extends JFrame
 {
@@ -23,10 +24,10 @@ public class GameRoomUI extends JFrame
 	public JTextField text = new JTextField(40);
 	public JTextArea message = new JTextArea(8,40);
 	public JLabel status = new JLabel("Welcome to the Game");
-	public JPanel gameBoard;
+	public Game gameBoard;
 	public JButton leave;
 	public String currentGame;
-	 AbstractGameFactory gf;
+	AbstractGameFactory gf;
 	
 	public GameRoomUI(String gameType)
 	{
@@ -58,6 +59,15 @@ public class GameRoomUI extends JFrame
             gf = new TicTacToeFactory();
             gameBoard = gf.createGame(gf);
 			gameBoard.setLayout(new GridLayout(1, 1));
+			for (Tile[] item: gameBoard.board.boardMatrix)
+			{
+				for (Tile test : item)
+				{
+					System.out.println("");
+					System.out.println(test.getRow());
+					System.out.println(test.getColumn());
+				}
+			}
 			gameBoard.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 			gameBoard.setAlignmentY(CENTER_ALIGNMENT);
 			gameBoard.setBounds(new Rectangle(50,50,625,625));

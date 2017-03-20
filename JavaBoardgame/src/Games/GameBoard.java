@@ -17,7 +17,7 @@ public class GameBoard extends JPanel{
     private int numRows;
     private int numColumns;
     private String gameTitle;
-    Tile[][] boardMatrix;
+    public Tile[][] boardMatrix;
 
     GameBoard(int boardWidth, int boardHeight, int rows, int cols, Color primary, Color alternate, String gameTitle) {
 

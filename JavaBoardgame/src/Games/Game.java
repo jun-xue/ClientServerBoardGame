@@ -9,7 +9,7 @@ import java.util.*;
  */
 public abstract class Game extends JPanel {
     AbstractGameFactory agf;
-    GameBoard board;
+    public GameBoard board;
     ArrayList<ImageIcon> pieces;
     Player isTurn;
     Player client;

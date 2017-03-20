@@ -6,7 +6,7 @@ import java.awt.*;
  * @author Daniel Ackerman 23104834
  * @version 0.1.0, 3/9/2017
  */
-class Tile extends JPanel {
+public class Tile extends JPanel {
     private Player owner;
     private String owned;
     private int row, column;
@@ -34,11 +34,11 @@ class Tile extends JPanel {
         add(imageHolder);
     }
 
-    int getRow() {
+    public int getRow() {
         return row;
     }
 
-    int getColumn()  {
+    public int getColumn()  {
         return column;
     }
 
