@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.HashSet;
 
 import Games.AbstractGameFactory;
-
+import Games.CheckersFactory;
 import Games.CheckersGame;
 import Games.Game;
 import Games.TicTacToeFactory;
@@ -45,11 +45,9 @@ public class GameRoom
     	{
     		gameName = "TTT";
     		boardSize = 3;
-            AbstractGameFactory tttgf = new TicTacToeFactory();
-            Game tictactoe = tttgf.createGame(tttgf);
-            tictactoe.runGame();
+    		
     		gameFactory = new TicTacToeFactory();
-    		game = new TicTacToeGame(gameFactory);
+            game = gameFactory.createGame(gameFactory);
 
     	}
     	else if (gameNumber == 1)
@@ -61,8 +59,11 @@ public class GameRoom
     	{
     		gameName = "Checkers";
     		boardSize = 8;
-
+    		
+    		gameFactory = new CheckersFactory();
+            game = gameFactory.createGame(gameFactory);
     	}
+    	
     	socket = new ServerSocket(0); // using 0 will just assign it to an unused one.
     	port = socket.getLocalPort();
     }

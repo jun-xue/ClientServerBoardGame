@@ -13,6 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
 import Games.AbstractGameFactory;
+import Games.CheckersFactory;
 import Games.Game;
 import Games.TicTacToeFactory;
 import Games.Tile;
@@ -59,15 +60,6 @@ public class GameRoomUI extends JFrame
             gf = new TicTacToeFactory();
             gameBoard = gf.createGame(gf);
 			gameBoard.setLayout(new GridLayout(1, 1));
-			for (Tile[] item: gameBoard.board.boardMatrix)
-			{
-				for (Tile test : item)
-				{
-					System.out.println("");
-					System.out.println(test.getRow());
-					System.out.println(test.getColumn());
-				}
-			}
 		}
 		else if (currentGame.equals("Chess"))
 		{
@@ -75,8 +67,11 @@ public class GameRoomUI extends JFrame
 		}
 		else if (currentGame.equals("Checkers"))
 		{
-			
+            gf = new CheckersFactory();
+            gameBoard = gf.createGame(gf);
+			gameBoard.setLayout(new GridLayout(1, 1));
 		}
+		
 		gameBoard.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		gameBoard.setAlignmentY(CENTER_ALIGNMENT);
 		gameBoard.setBounds(new Rectangle(50,50,625,625));
@@ -89,7 +84,7 @@ public class GameRoomUI extends JFrame
 	}
 	
 	public static void main(String args[]) {
-		GameRoomUI test = new GameRoomUI("TTT");
+		GameRoomUI test = new GameRoomUI("Checkers");
 		test.setVisible(true);
 	} 
 

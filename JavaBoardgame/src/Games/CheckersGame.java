@@ -12,9 +12,10 @@ public class CheckersGame extends Game  {
         logic = new CheckersLogic(this, state);
     }
 
+    @Override
     void switchTurn()   {
-        playerQueue.add(isTurn);
-        isTurn = playerQueue.remove();
+        super.switchTurn();
+        logic.takeTurn(isTurn, state);
     }
 
     @Override

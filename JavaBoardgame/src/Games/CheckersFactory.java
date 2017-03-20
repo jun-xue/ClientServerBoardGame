@@ -1,7 +1,6 @@
 package Games;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * @author Daniel Ackerman 23104834
@@ -14,7 +13,7 @@ public class CheckersFactory implements AbstractGameFactory{
     int rows = 8, cols = 8;
     Color primary, alternate;
 
-    CheckersFactory()   {
+    public CheckersFactory()   {
         gameTitle = "Checkers";
         boardWidth = 600;
         boardHeight = 600;
@@ -37,16 +36,16 @@ public class CheckersFactory implements AbstractGameFactory{
     @Override
     public void loadImages(Player goesFirst, Player follow) {
         //read in and scale images.
-        ImageIcon redChecker = new ImageIcon(new ImageIcon("images/redChecker.png")
+        ImageIcon redChecker = new ImageIcon(new ImageIcon("src/Assets/redChecker.png")
                 .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
         goesFirst.playerPieces.add(redChecker);
-        ImageIcon redKing = new ImageIcon(new ImageIcon("images/redKing.png")
+        ImageIcon redKing = new ImageIcon(new ImageIcon("src/Assets/redKing.png")
                 .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
         goesFirst.playerPieces.add(redKing);
-        ImageIcon whiteChecker = new ImageIcon(new ImageIcon("images/whiteChecker.png")
+        ImageIcon whiteChecker = new ImageIcon(new ImageIcon("src/Assets/whiteChecker.png")
                 .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
         follow.playerPieces.add(whiteChecker);
-        ImageIcon whiteKing = new ImageIcon(new ImageIcon("images/whiteKing.png")
+        ImageIcon whiteKing = new ImageIcon(new ImageIcon("src/Assets/whiteKing.png")
                 .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
         follow.playerPieces.add(whiteKing);
     }
@@ -58,12 +57,12 @@ public class CheckersFactory implements AbstractGameFactory{
                 if ((t.getRow() == 0 || t.getRow() == 2) && (t.getColumn() % 2 != 0)) {
                     t.setOwner(opponent);
                     opponent.addTile(t);
-                    t.addPiece(opponent.playerPieces.get(0));
+                    t.addPiece(opponent.playerPieces.get(0), false, false);
                 }
                 if (t.getRow() == 1 && (t.getColumn() % 2 == 0)) {
                     t.setOwner(opponent);
                     opponent.addTile(t);
-                    t.addPiece(opponent.playerPieces.get(0));
+                    t.addPiece(opponent.playerPieces.get(0), false, false);
                 }
             }
         }
@@ -72,12 +71,12 @@ public class CheckersFactory implements AbstractGameFactory{
                 if ((t.getRow() == 5 || t.getRow() == 7) && (t.getColumn() % 2 == 0)) {
                     t.setOwner(client);
                     client.addTile(t);
-                    t.addPiece(client.playerPieces.get(0));
+                    t.addPiece(client.playerPieces.get(0), true, false);
                 }
                 if (t.getRow() == 6 && (t.getColumn() % 2 != 0)) {
                     t.setOwner(client);
                     client.addTile(t);
-                    t.addPiece(client.playerPieces.get(0));
+                    t.addPiece(client.playerPieces.get(0), true, false);
                 }
             }
         }

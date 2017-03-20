@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import Games.Game;
 import Games.Tile;
 import Server.Player;
 import Server.ServerObject;
@@ -216,7 +217,10 @@ public class ClientMain
         Socket socket = new Socket(serverName, port);
 		ObjectOutputStream oosRoom;
 		ObjectInputStream oisRoom;
+		oosRoom = new ObjectOutputStream(socket.getOutputStream());
+		oisRoom = new ObjectInputStream(socket.getInputStream());
 		GameRoomUI newRoom = new GameRoomUI(gameName);
+		newRoom.setVisible(true);
 		
 		for (Tile[] row: newRoom.gameBoard.board.boardMatrix) {
         	for (Tile tile: row) { 
@@ -225,8 +229,14 @@ public class ClientMain
     			    @Override
     			    public void mousePressed(MouseEvent e) 
     			    {
-    			    	//tile.setBackground(Color.RED);
-    			    		//out.println( "MOVEMADE " + tile.x + " " + tile.y);
+    			    	try 
+    			    	{
+							oosRoom.writeObject(new ServerObject("MOVE", account.username, tile.getRow() + " " + tile.getColumn()));
+						} 
+    			    	catch (IOException e1) 
+    			    	{
+							e1.printStackTrace();
+						}
     			    	System.out.println(tile.getRow() + " " + tile.getColumn());
     			    	
     			    }
@@ -234,10 +244,6 @@ public class ClientMain
     	    }
 		}
 		
-		newRoom.setVisible(true);
-		//this will create the new window and display everything
-		oosRoom = new ObjectOutputStream(socket.getOutputStream());
-		oisRoom = new ObjectInputStream(socket.getInputStream());
 		//make the listeners in here, including sending stuff to the GameRoomServer
 		newRoom.text.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -274,6 +280,11 @@ public class ClientMain
 				newRoom.message.append(packetIn.getPayload().toString());
 			}
 			
+			if (packetIn.getHeader().equals("GAMESTATE"))
+			{
+				//make this override the current gamestate of the game
+				newRoom.gameBoard = (Game) packetIn.getPayload();
+			}
 			if (packetIn.getHeader().equals("FINISHED"))
 			{
 				break;

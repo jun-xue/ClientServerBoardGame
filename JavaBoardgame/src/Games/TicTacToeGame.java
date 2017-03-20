@@ -1,7 +1,6 @@
 package Games;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 /**
@@ -17,6 +16,11 @@ public class TicTacToeGame extends Game implements MouseListener{
 
     public TicTacToeGame(AbstractGameFactory tttgf)   {
         super("TicTacToe", tttgf);
+        for (Tile[] tt : board.boardMatrix) {
+            for(Tile t : tt)    {
+                t.addMouseListener(this);
+            }
+        }
     }
 
     public boolean checkWinner(){
@@ -59,8 +63,8 @@ public class TicTacToeGame extends Game implements MouseListener{
     protected void run(Tile clicked) {
         ImageIcon piece;
         currentPlayer=flipTurn(currentPlayer);
-        if (currentPlayer==Player1){piece=pieces.get(0);}
-        else{piece=pieces.get(1);}
+        if (currentPlayer==Player1){piece=client.playerPieces.get(0);}
+        else{piece=opponent.playerPieces.get(1);}
         if (canMakeMove(clicked.getRow(),clicked.getColumn(), currentPlayer)){
             board.boardMatrix[clicked.getRow()][clicked.getColumn()].setOwned(currentPlayer);
             clicked.addPiece(piece);
