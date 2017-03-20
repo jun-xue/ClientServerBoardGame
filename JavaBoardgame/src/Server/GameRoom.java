@@ -161,7 +161,7 @@ public class GameRoom
 				
 				while(!game.state.gameOver)
 				{
-					//sendPacketToAllClients(new ServerObject("GAMESTATE", "Server", game.state));
+					sendPacketToAllClients(new ServerObject("GAMESTATE", "Server", game.state));
 					ServerObject packetIn = (ServerObject)ois.readObject();
 					
 					if (packetIn.getHeader().equals("MOVE"))

@@ -66,11 +66,10 @@ public class ServerMain
 			{
 				oos = new ObjectOutputStream(socket.getOutputStream());
 				ois = new ObjectInputStream(socket.getInputStream());
-				
+				boolean received = false;
 				// Get the account of this player by rerunning until a correct response is sent
 				while (true)
 				{
-					boolean received = false;
 					// Send a request to the client for a Name Object
 					sendPacketToClient(new ServerObject("NAMEREQUEST", "Server", null));
 					
