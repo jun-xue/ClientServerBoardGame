@@ -6,11 +6,11 @@ import java.util.ArrayList;
  * @author Daniel Ackerman 23104834
  * @version 0.1.0, 3/9/2017
  */
-class Player {
+public class Player {
     boolean starts = false; //red starts
     ArrayList<ImageIcon> playerPieces;
     ArrayList<Tile> myTiles;
-    String name;
+    public String name;
 
     Player(String name) {
         playerPieces = new ArrayList<>(2);

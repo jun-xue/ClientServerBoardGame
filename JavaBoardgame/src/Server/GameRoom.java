@@ -52,7 +52,7 @@ public class GameRoom
     	}
     	else if (gameNumber == 1)
     	{
-    		gameName = "Chess";
+    		gameName = "Othello";
     		boardSize = 8;
     	}
     	else if (gameNumber == 2)
@@ -104,6 +104,12 @@ public class GameRoom
 						player1 = this.a;
 					}
 					
+					if (player1 != null && player2 != null)
+					{
+						game.client.name = player1.username;
+						game.opponent.name = player2.username;
+						
+					}
 					new GameRoomServerHandler(s.accept(), a).start();
 					currentPlayers++;
 				} 
@@ -146,18 +152,14 @@ public class GameRoom
 				
 				sendPacketToAllClients(new ServerObject("GAMEINFO", "Server", gameName));
 				
-				while(gameNotWon)
+				while(!game.state.gameOver)
 				{
-					//oos.writeObject(new ServerObject("GAMESTATE", "Server", game.));
+					sendPacketToAllClients(new ServerObject("GAMESTATE", "Server", game.state));
 					ServerObject packetIn = (ServerObject)ois.readObject();
 					
-					if(packetIn.getHeader().equals("START"))
+					if (packetIn.getHeader().equals("MOVE"))
 					{
-						//game.start()
-					}
-					else if (packetIn.getHeader().equals("MOVE"))
-					{
-			    		
+			    		//game.doMove(((Tile[])packetIn.getPayload()));
 					}
 					else if (packetIn.getHeader().equals("MESSAGE"))
 					{
@@ -165,7 +167,6 @@ public class GameRoom
 					}
 					else if (packetIn.getHeader().equals("QUIT"))
 					{
-						//award win to other player
 						sendPacketToAllClients(new ServerObject("FINISHED", "Server", null));
 						currentPlayers = 0;
 						break;

@@ -61,7 +61,7 @@ public class GameRoomUI extends JFrame
             gameBoard = gf.createGame(gf);
 			gameBoard.setLayout(new GridLayout(1, 1));
 		}
-		else if (currentGame.equals("Chess"))
+		else if (currentGame.equals("Othello"))
 		{
 			
 		}

@@ -116,4 +116,10 @@ public class TicTacToeGame extends Game implements MouseListener{
     public void runGame() {
 
     }
+
+	@Override
+	public GameState doMove() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

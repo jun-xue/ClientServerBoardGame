@@ -24,4 +24,10 @@ public class CheckersGame extends Game  {
             GameState returnedState = logic.takeTurn(isTurn, state);
         }
     }
+
+	@Override
+	public GameState doMove() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

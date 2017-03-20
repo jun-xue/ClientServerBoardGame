@@ -12,10 +12,10 @@ public abstract class Game extends JPanel {
     public GameBoard board;
     ArrayList<ImageIcon> pieces;
     Player isTurn;
-    Player client;
-    Player opponent;
+    public Player client;
+    public Player opponent;
     Queue<Player> playerQueue;  //only used locally
-    GameState state;
+    public GameState state;
 
     Game(String gameTitle, AbstractGameFactory factory) {
         //super(gameTitle);    //super is JFrame / for now
@@ -53,5 +53,6 @@ public abstract class Game extends JPanel {
         state = new GameState(board.boardMatrix, isTurn);
     }
 
+    public abstract GameState doMove();
     public abstract void runGame();
 }

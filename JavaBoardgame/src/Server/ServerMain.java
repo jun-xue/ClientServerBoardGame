@@ -157,9 +157,6 @@ public class ServerMain
 					else if(packetIn.getHeader().equals("MAKEROOM"))
 					{
 						GameRoom newRoom;
-						//payload[0] == room name
-						//payload[1] == gametype
-						
 						synchronized (gameRoomsList) 
 						{
 							newRoom = new GameRoom(((String[])packetIn.getPayload())[0]);

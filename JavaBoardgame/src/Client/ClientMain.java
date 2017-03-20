@@ -17,6 +17,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import Games.Game;
+import Games.GameState;
 import Games.Tile;
 import Server.Player;
 import Server.ServerObject;
@@ -79,7 +80,7 @@ public class ClientMain
 			public void actionPerformed(ActionEvent e) 
 			{
 				String roomName = JOptionPane.showInputDialog("Enter a Room Name: ");
-				String[] options = {"Tic-Tac-Toe", "Chess", "Checkers" };
+				String[] options = {"Tic-Tac-Toe", "Othello", "Checkers" };
 				int choice = JOptionPane.showOptionDialog(null, "Choose a Game:", "Choose Game",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
@@ -222,6 +223,7 @@ public class ClientMain
 		GameRoomUI newRoom = new GameRoomUI(gameName);
 		newRoom.setVisible(true);
 		
+		
 		for (Tile[] row: newRoom.gameBoard.board.boardMatrix) {
         	for (Tile tile: row) { 
     	    	tile.addMouseListener(new MouseAdapter(){
@@ -237,6 +239,7 @@ public class ClientMain
     			    	{
 							e1.printStackTrace();
 						}
+    			    	System.out.println(((Tile) e.getComponent()).getRow());
     			    	System.out.println(tile.getRow() + " " + tile.getColumn());
     			    	
     			    }
@@ -282,8 +285,7 @@ public class ClientMain
 			
 			if (packetIn.getHeader().equals("GAMESTATE"))
 			{
-				//make this override the current gamestate of the game
-				newRoom.gameBoard = (Game) packetIn.getPayload();
+				newRoom.gameBoard.state = (GameState) packetIn.getPayload();
 			}
 			if (packetIn.getHeader().equals("FINISHED"))
 			{
