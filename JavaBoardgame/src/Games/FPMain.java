@@ -7,9 +7,9 @@ public class FPMain {
 
     public static void main(String[] args)  {
 
-        AbstractGameFactory agf = new CheckersFactory();
-        Game checkersGame = agf.createGame(agf);
-        checkersGame.runGame();
+        AbstractGameFactory agf = new TicTacToeFactory();
+        Game TTTGame = agf.createGame(agf);
+        TTTGame.runGame();
     }
 
 }

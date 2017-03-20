@@ -94,7 +94,6 @@ public class ServerMain
 							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
 							sendPacketToClient(outPacket);
 							account = (Player)packetIn.getPayload();
-							System.out.println("New user " + account.username + " has connected with " + account.wins + " wins and " + account.loses + " loses!\n");
 							received = true;
 						}
 					}
@@ -110,7 +109,6 @@ public class ServerMain
 							
 							account = (Player)packetIn.getPayload();
 							
-							System.out.println("User " + account.username + " has connected with " + account.wins + " wins and " + account.loses + " loses!\n");
 							received = true;
 						}
 						else // the name either doesn't exist or had the wrong password
@@ -124,6 +122,7 @@ public class ServerMain
 					// Since we are updating usernames across different threads, we need to use synchronized
 					if (received == true)
 					{		
+						System.out.println("User " + account.username + " has connected!\n");
 						synchronized (usernames)
 						{
 							if (!usernames.contains(account.username))

@@ -161,7 +161,7 @@ public class ClientMain
 				while(true)
 				{
 					String[] options = { "Existing User", "New User" };
-					int choice = JOptionPane.showOptionDialog(null, "Please choose an account option", "Login", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					int choice = JOptionPane.showOptionDialog(null, "Please choose an account option. This message will show up again if failed login.", "Login", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (choice == 0)
 					{
 						// Existing user
