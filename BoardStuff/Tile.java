@@ -28,9 +28,14 @@ class Tile extends JPanel {
         this.owned = owned;
     }
 
-    void addPiece(ImageIcon gamePiece)   {
+    void addPiece(ImageIcon gamePiece)  {
         JLabel imageHolder = new JLabel(gamePiece);
         add(imageHolder);
+    }
+
+    void addPiece(ImageIcon gamePiece, boolean isKing, boolean starts)   {
+        BoardPiece checker = new BoardPiece(gamePiece, isKing, starts);
+        add(checker);
     }
 
     int getRow() {

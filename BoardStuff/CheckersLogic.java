@@ -39,167 +39,162 @@ public class CheckersLogic implements MouseListener {
         this.isTurn = isTurn;
         this.state = new GameState(state);
         moved = false;
-        jump = getJumps();
-        if (!jump)  {
-            getMovables();
-        }
-        hiLiteMoveOptions();
+        getMoves();
+        hiLiteMoves();
         //turn continued in mouselistener handler
         state.gameOver = checkWinner();
         return state;
     }
 
-    boolean getJumps() {
+    void getMoves() {
+        if (!(jump = checkForJumps()))  {
+            checkForMoves();
+        }
+    }
+
+    void getDestinations(Tile from)   {
+            if (jump)   {
+                getJumpDestinations(from);
+            }   else    {
+                getMoveDestinations(from);
+            }
+    }
+
+    boolean checkForJumps() {
         canMove.clear();
         for (Tile t : isTurn.myTiles) {
-            if (canJump(t)) {
+            BoardPiece checkerType = (BoardPiece) t.getComponent(0);
+            int rowFrom = t.getRow(), colFrom = t.getColumn();
+            if (checkJump(checkerType.isKing, rowFrom, colFrom, rowFrom + 1,
+                    colFrom + 1, rowFrom + 2, colFrom + 2)) {
+                canMove.add(t);
+            }
+            if (checkJump(checkerType.isKing, rowFrom, colFrom, rowFrom + 1,
+                    colFrom - 1, rowFrom + 2, colFrom - 2)) {
+                canMove.add(t);
+            }
+            if (checkJump(checkerType.isKing, rowFrom, colFrom, rowFrom - 1,
+                    colFrom + 1, rowFrom - 2, colFrom + 2)) {
+                canMove.add(t);
+            }
+            if (checkJump(checkerType.isKing, rowFrom, colFrom, rowFrom - 1,
+                    colFrom - 1, rowFrom - 2, colFrom - 2)) {
                 canMove.add(t);
             }
         }
         return !canMove.isEmpty();
     }
 
-    boolean canJump(Tile t)    {
-        Player opponent = checkers.playerQueue.peek();
-        int row = t.getRow();
-        int col = t.getColumn();
-        if (isTurn.starts && row>1) {
-            if ((col==0 && grid[row-1][1].getOwner()==opponent && grid[row-2][2].free) ||
-                    (col==1 && grid[row-1][2].getOwner()==opponent && grid[row-2][3].free)){
-                return true;
-            }
-            if ((col==7 && grid[row-1][6].getOwner()==opponent && grid[row-2][5].free) ||
-                    (col==6 && grid[row-1][5].getOwner()==opponent && grid[row-2][4].free)) {
-                return true;
-            }
-            if ((col>1 && col<6 && grid[row-1][col+1].getOwner()==opponent && grid[row-2][col+2].free) ||
-                    (col>1 && col<6 && grid[row-1][col-1].getOwner()==opponent && grid[row-2][col-2].free)) {
-                return true;
-            }
-        }
-        if (!isTurn.starts && row<6) {
-            if ((col==0 && grid[row+1][1].getOwner()==opponent && grid[row+2][2].free) ||
-                    (col==1 && grid[row+1][2].getOwner()==opponent && grid[row+2][3].free)){
-                return true;
-            }
-            if ((col==7 && grid[row+1][6].getOwner()==opponent && grid[row+2][5].free) ||
-                    (col==6 && grid[row+1][5].getOwner()==opponent && grid[row+2][4].free)) {
-                return true;
-            }
-            if ((col>1 && col<6 && grid[row+1][col+1].getOwner()==opponent && grid[row+2][col+2].free) ||
-                    (col>1 && col<6 && grid[row+1][col-1].getOwner()==opponent && grid[row+2][col-2].free)) {
-                return true;
-            }
-            return false;
-        }
-        return false;
-    }
-
-    void getMovables()   {
+    boolean checkForMoves()  {
         canMove.clear();
         for (Tile t : isTurn.myTiles) {
-            int row = t.getRow(), col = t.getColumn();
-            if (isTurn.starts && row>0) {    //starts means player started at bottom so move up
-                if (col != 0 && grid[row-1][col-1].free ||
-                        col != 7 && grid[row-1][col+1].free) {
-                    canMove.add(t);
-                }
+            int rowFrom = t.getRow(), colFrom = t.getColumn();
+            BoardPiece checkerType = (BoardPiece) t.getComponent(0);
+            if (checkMove(checkerType.isKing, rowFrom, colFrom, rowFrom + 1, colFrom + 1)) {
+                canMove.add(t);
             }
-
-            if (!isTurn.starts && row<7) {
-                if (col != 0 && grid[row+1][col-1].free ||
-                        col != 7 && grid[row+1][col+1].free) {
-                    canMove.add(t);
-                }
+            if (checkMove(checkerType.isKing, rowFrom, colFrom, rowFrom + 1, colFrom - 1)) {
+                canMove.add(t);
+            }
+            if (checkMove(checkerType.isKing, rowFrom, colFrom, rowFrom - 1, colFrom + 1)) {
+                canMove.add(t);
+            }
+            if (checkMove(checkerType.isKing, rowFrom, colFrom, rowFrom - 1, colFrom - 1)) {
+                canMove.add(t);
             }
         }
+        return !canMove.isEmpty();
     }
 
-    void getLegalMoves(Tile from)    {
+    boolean getJumpDestinations(Tile t) {
         legalMoves.clear();
-        Player opponent = checkers.playerQueue.peek();
-        int row = from.getRow(), col = from.getColumn();
-        if (isTurn.starts)    {
-            if (jump)   {
-                if (col==0 && grid[row-1][1].getOwner()==opponent && grid[row-2][2].free)  {
-                    legalMoves.add(grid[row-2][2]);
-                }
-                if (col==1 && grid[row-1][2].getOwner()==opponent && grid[row-2][3].free)  {
-                    legalMoves.add(grid[row-2][3]);
-                }
-                if (col==6 && grid[row-1][5].getOwner()==opponent && grid[row-2][4].free)   {
-                    legalMoves.add(grid[row-2][4]);
-                }
-                if (col==7 && grid[row-1][6].getOwner()==opponent && grid[row-2][5].free)   {
-                    legalMoves.add(grid[row-2][5]);
-                }
-                if (col>1 && col<6 && grid[row-1][col-1].getOwner()==opponent && grid[row-2][col-2].free)   {
-                    legalMoves.add(grid[row-2][col-2]);
-                }
-                if (col>1 && col<6 && grid[row-1][col+1].getOwner()==opponent && grid[row-2][col+2].free)  {
-                    legalMoves.add(grid[row-2][col+2]);
-                }
-                return;
-            }
-            if (col == 0 && grid[row-1][col+1].free)   {
-                legalMoves.add(grid[row-1][col+1]);
-            }   else if (col == 7 && grid[row-1][col-1].free)   {
-                legalMoves.add(grid[row-1][col-1]);
-            }   else {
-                if (grid[row-1][col-1].free) {
-                    legalMoves.add(grid[row-1][col-1]);
-                }
-                if (grid[row-1][col+1].free) {
-                    legalMoves.add(grid[row-1][col+1]);
-                }
-            }
-            return;
+        BoardPiece checkerType = (BoardPiece)t.getComponent(0);
+        int rowFrom = t.getRow(), colFrom = t.getColumn();
+        if (checkJump(checkerType.isKing, rowFrom, colFrom, rowFrom+1,
+                colFrom+1, rowFrom+2, colFrom+2))    {
+            legalMoves.add(grid[rowFrom+2][colFrom+2]);
         }
-        if (!isTurn.starts)    {
-            if (jump)   {
-                if (col==0 && grid[row+1][1].getOwner()==opponent && grid[row+2][2].free)  {
-                    legalMoves.add(grid[row+2][2]);
-                }
-                if (col==1 && grid[row+1][2].getOwner()==opponent && grid[row+2][3].free)  {
-                    legalMoves.add(grid[row+2][3]);
-                }
-                if (col==6 && grid[row+1][5].getOwner()==opponent && grid[row+2][4].free)   {
-                    legalMoves.add(grid[row+2][4]);
-                }
-                if (col==7 && grid[row+1][6].getOwner()==opponent && grid[row+2][5].free)   {
-                    legalMoves.add(grid[row+2][5]);
-                }
-                if (col>1 && col<6 && grid[row+1][col-1].getOwner()==opponent && grid[row+2][col-2].free)   {
-                    legalMoves.add(grid[row+2][col-2]);
-                }
-                if (col>1 && col<6 && grid[row+1][col+1].getOwner()==opponent && grid[row+2][col+2].free)  {
-                    legalMoves.add(grid[row+2][col+2]);
-                }
-                return;
-            }
-            if (col == 0 && grid[row+1][col+1].free)   {
-                legalMoves.add(grid[row+1][col+1]);
-            }   else if (col == 7 && grid[row+1][col-1].free)   {
-                legalMoves.add(grid[row+1][col-1]);
-            }   else {
-                if (grid[row+1][col-1].free) {
-                    legalMoves.add(grid[row+1][col-1]);
-                }
-                if (grid[row+1][col+1].free) {
-                    legalMoves.add(grid[row+1][col+1]);
-                }
-            }
+        if (checkJump(checkerType.isKing, rowFrom, colFrom, rowFrom+1,
+                colFrom-1, rowFrom+2, colFrom-2))    {
+            legalMoves.add(grid[rowFrom+2][colFrom-2]);
         }
+        if (checkJump(checkerType.isKing, rowFrom, colFrom, rowFrom-1,
+                colFrom+1, rowFrom-2, colFrom+2))    {
+            legalMoves.add(grid[rowFrom-2][colFrom+2]);
+        }
+        if (checkJump(checkerType.isKing, rowFrom, colFrom, rowFrom-1,
+                colFrom-1, rowFrom-2, colFrom-2))    {
+            legalMoves.add(grid[rowFrom-2][colFrom-2]);
+        }
+        return !legalMoves.isEmpty();
     }
 
-    void hiLiteMoveOptions() {
+    boolean getMoveDestinations(Tile t)  {
+        legalMoves.clear();
+        int rowFrom = t.getRow(), colFrom = t.getColumn();
+        BoardPiece checkerType = (BoardPiece) t.getComponent(0);
+        if (checkMove(checkerType.isKing, rowFrom, colFrom, rowFrom + 1, colFrom + 1)) {
+            legalMoves.add(grid[rowFrom + 1][colFrom + 1]);
+        }
+        if (checkMove(checkerType.isKing, rowFrom, colFrom, rowFrom + 1, colFrom - 1)) {
+            legalMoves.add(grid[rowFrom + 1][colFrom - 1]);
+        }
+        if (checkMove(checkerType.isKing, rowFrom, colFrom, rowFrom - 1, colFrom + 1)) {
+            legalMoves.add(grid[rowFrom - 1][colFrom + 1]);
+        }
+        if (checkMove(checkerType.isKing, rowFrom, colFrom, rowFrom - 1, colFrom - 1)) {
+            legalMoves.add(grid[rowFrom - 1][colFrom - 1]);
+        }
+        return !legalMoves.isEmpty();
+    }
+
+    boolean checkJump(boolean isKing, int rowFrom, int colFrom, int rowJump, int colJump, int rowTo, int colTo)   {
+        if (rowTo<0 || rowTo>7 || colTo<0 || colTo>7) {   //jumping off the board
+            return false;
+        }
+        if (grid[rowJump][colJump].free || grid[rowJump][colJump].getOwner()==isTurn)   {   //no opponent to jump
+            return false;
+        }
+        if (!grid[rowTo][colTo].free)   {   //jumpTo Tile is not free
+            return false;
+        }
+        if (!isKing)    {
+            if (isTurn.starts && rowTo>rowFrom)   { //red non-king can't jump backwards
+                return false;
+            }
+            if (!isTurn.starts && rowTo<rowFrom)    {   //white non-king can't jump backwards
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean checkMove(boolean isKing, int rowFrom,int colFrom, int rowTo,int colTo)  {
+        if (rowTo<0 || rowTo>7 || colTo<0 || colTo>7) {   //moving off the board
+            return false;
+        }
+        if (!grid[rowTo][colTo].free)   {   //Tile is not free
+            return false;
+        }
+        if (!isKing)    {
+            if (isTurn.starts && rowTo>rowFrom)   { //red non-king can't move backwards
+                return false;
+            }
+            if (!isTurn.starts && rowTo<rowFrom)    {   //white non-king can't move backwards
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void hiLiteMoves() {
         for (Tile t : canMove) {
             t.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
         }
     }
 
-    void hiLiteLegalDestinations(Tile from)  {
-        from.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 2));
+    void hiLiteDestinations(Tile from)  {
+        from.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
         for (Tile t : legalMoves) {
             t.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
         }
@@ -207,6 +202,7 @@ public class CheckersLogic implements MouseListener {
 
     boolean checkWinner()  {
         if (checkers.client.myTiles.size()==0 || checkers.opponent.myTiles.size()==0)   {
+            System.out.println("Winner: " + isTurn.getName());
             return true;
         }
         return false;
@@ -223,15 +219,8 @@ public class CheckersLogic implements MouseListener {
         toRemove.remove(jumped);
         doMove(from, to);
         jump = false;
+        checkKingMe(to);
         checkWinner();
-    }
-
-    void keepJumping(Tile from) {
-        moved = false;
-        jump = true;
-        pieceSelected = true;
-        getLegalMoves(from);
-        hiLiteLegalDestinations(from);
     }
 
     void doMove(Tile from, Tile to)  {
@@ -246,33 +235,64 @@ public class CheckersLogic implements MouseListener {
         pieceSelected = false;
         moved = true;
         this.from = null;
+        checkKingMe(to);
         checkWinner();
+    }
+
+    void keepJumping() {
+        jump = false;
+        pieceSelected = false;
+        takeTurn(isTurn, state);
+    }
+
+    void checkKingMe(Tile t)    {
+        BoardPiece checker = (BoardPiece)t.getComponent(0);
+        if (!checker.isKing && isTurn.starts && t.getRow()==0)    {
+            t.remove(checker);
+            t.add(new BoardPiece(isTurn.playerPieces.get(1), true, true));
+            return;
+        }
+        if (!checker.isKing && !isTurn.starts && t.getRow()==7)    {
+            t.remove(checker);
+            t.add(new BoardPiece(isTurn.playerPieces.get(1), false, true));
+        }
+    }
+
+    void resetTurn()    {
+        checkers.board.clearHiLites();
+        pieceSelected = false;
+        getMoves();
+        hiLiteMoves();
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         Tile clicked = (Tile)e.getComponent();
         if (!moved) {
-            if (jump && pieceSelected == true && legalMoves.contains(clicked)) {
+            if (jump && pieceSelected && legalMoves.contains(clicked)) {
                 doJump(from, clicked);
-                if (canJump(clicked))    {
-                    keepJumping(clicked);
+                if (getJumpDestinations(clicked))    {
+                    keepJumping();
+                    return;
                 }
                 checkers.switchTurn();
                 return;
             }
-            if (pieceSelected == true && legalMoves.contains(clicked)) {
+            if (pieceSelected && legalMoves.contains(clicked)) {
                 doMove(from, clicked);
                 checkers.switchTurn();
                 return;
             }
-            if (clicked.getOwner() == isTurn && pieceSelected == false) {
+            if (clicked.getOwner()==isTurn && !pieceSelected) {
                 checkers.board.clearHiLites();
                 from = clicked;
                 pieceSelected = true;
-                getLegalMoves(from);
-                hiLiteLegalDestinations(from);
+                getDestinations(from);
+                hiLiteDestinations(from);
                 return;
+            }
+            if (clicked.getOwner()==isTurn && pieceSelected && from==clicked)   {
+                resetTurn();
             }
         }
     }

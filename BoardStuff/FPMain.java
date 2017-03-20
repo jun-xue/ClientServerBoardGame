@@ -9,9 +9,6 @@ public class FPMain {
         AbstractGameFactory agf = new CheckersFactory();
         Game checkersGame = agf.createGame(agf);
         checkersGame.runGame();
-//        AbstractGameFactory tttgf = new TicTacToeFactory();
-//        Game tictactoe = tttgf.createGame(tttgf);
-//        tictactoe.runGame();
     }
 
 }
