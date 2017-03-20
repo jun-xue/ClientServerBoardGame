@@ -7,7 +7,8 @@ import java.awt.*;
  * @version 0.1.0, 3/9/2017
  */
 public class Tile extends JPanel {
-    private Player owner;
+	private static final long serialVersionUID = -6407769276756452673L;
+	private Player owner;
     private String owned;
     private int row, column;
     boolean free = true;

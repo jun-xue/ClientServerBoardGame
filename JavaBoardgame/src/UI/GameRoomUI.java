@@ -27,6 +27,7 @@ public class GameRoomUI extends JFrame
 	public JLabel status = new JLabel("Welcome to the Game");
 	public Game gameBoard;
 	public JButton leave;
+	public JButton sendMoves;
 	public String currentGame;
 	AbstractGameFactory gf;
 	
@@ -55,23 +56,26 @@ public class GameRoomUI extends JFrame
 		leave.setBounds(780, 10, 100, 50);
 		getContentPane().add(leave);
 		
+		sendMoves = new JButton("Send Moves");
+		sendMoves.setBounds(700, 600, 150, 50);
+		getContentPane().add(sendMoves);
+		
 		if (currentGame.equals("TTT"))
 		{
             gf = new TicTacToeFactory();
             gameBoard = gf.createGame(gf);
-			gameBoard.setLayout(new GridLayout(1, 1));
 		}
 		else if (currentGame.equals("Othello"))
 		{
-			
+//            gf = new OthelloFactory();
+//            gameBoard = gf.createGame(gf);
 		}
 		else if (currentGame.equals("Checkers"))
 		{
             gf = new CheckersFactory();
             gameBoard = gf.createGame(gf);
-			gameBoard.setLayout(new GridLayout(1, 1));
 		}
-		
+		gameBoard.setLayout(new GridLayout(1, 1));
 		gameBoard.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		gameBoard.setAlignmentY(CENTER_ALIGNMENT);
 		gameBoard.setBounds(new Rectangle(50,50,625,625));

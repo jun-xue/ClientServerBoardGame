@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
@@ -218,6 +219,7 @@ public class ClientMain
         Socket socket = new Socket(serverName, port);
 		ObjectOutputStream oosRoom;
 		ObjectInputStream oisRoom;
+		ArrayList<Tile> moves = new ArrayList<Tile>();
 		oosRoom = new ObjectOutputStream(socket.getOutputStream());
 		oisRoom = new ObjectInputStream(socket.getInputStream());
 		GameRoomUI newRoom = new GameRoomUI(gameName);
@@ -231,17 +233,7 @@ public class ClientMain
     			    @Override
     			    public void mousePressed(MouseEvent e) 
     			    {
-    			    	try 
-    			    	{
-							oosRoom.writeObject(new ServerObject("MOVE", account.username, tile.getRow() + " " + tile.getColumn()));
-						} 
-    			    	catch (IOException e1) 
-    			    	{
-							e1.printStackTrace();
-						}
-    			    	System.out.println(((Tile) e.getComponent()).getRow());
-    			    	System.out.println(tile.getRow() + " " + tile.getColumn());
-    			    	
+    			    	moves.add(((Tile) e.getComponent()));
     			    }
     	    }); 
     	    }
@@ -266,6 +258,25 @@ public class ClientMain
 				try 
 				{
 					oosRoom.writeObject(new ServerObject("QUIT", account.username, null));
+				} 
+				catch (IOException e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		newRoom.sendMoves.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				try 
+				{
+					for (Tile move : moves)
+					{
+						System.out.println(move.getRow() + " " + move.getColumn());
+					}
+					oosRoom.reset();
+					oosRoom.writeObject(new ServerObject("MOVE", account.username, moves));
+					moves.clear();
 				} 
 				catch (IOException e1) 
 				{

@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import Games.AbstractGameFactory;
@@ -14,6 +16,7 @@ import Games.Game;
 import Games.TicTacToeFactory;
 
 import Games.TicTacToeGame;
+import Games.Tile;
 
 public class GameRoom 
 {
@@ -149,16 +152,24 @@ public class GameRoom
 				oos = new ObjectOutputStream(s.getOutputStream());
 				ois = new ObjectInputStream(s.getInputStream());
 				outputStreams.add(oos);
+				ArrayList<Tile> moves;
 				
 				sendPacketToAllClients(new ServerObject("GAMEINFO", "Server", gameName));
 				
 				while(!game.state.gameOver)
 				{
-					sendPacketToAllClients(new ServerObject("GAMESTATE", "Server", game.state));
+					//sendPacketToAllClients(new ServerObject("GAMESTATE", "Server", game.state));
 					ServerObject packetIn = (ServerObject)ois.readObject();
 					
 					if (packetIn.getHeader().equals("MOVE"))
 					{
+						moves = new ArrayList<Tile>((ArrayList<Tile>) packetIn.getPayload());
+						
+						for (Tile move : moves)
+						{
+							System.out.println(move.getRow() + " " + move.getColumn());
+						}
+						moves.clear();
 			    		//game.doMove(((Tile[])packetIn.getPayload()));
 					}
 					else if (packetIn.getHeader().equals("MESSAGE"))
