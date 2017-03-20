@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * @author Daniel Ackerman 23104834
@@ -13,7 +12,7 @@ public class CheckersFactory implements AbstractGameFactory{
     int rows = 8, cols = 8;
     Color primary, alternate;
 
-    CheckersFactory()   {
+    public CheckersFactory()   {
         gameTitle = "Checkers";
         boardWidth = 600;
         boardHeight = 600;
@@ -57,12 +56,12 @@ public class CheckersFactory implements AbstractGameFactory{
                 if ((t.getRow() == 0 || t.getRow() == 2) && (t.getColumn() % 2 != 0)) {
                     t.setOwner(opponent);
                     opponent.addTile(t);
-                    t.addPiece(opponent.playerPieces.get(0));
+                    t.addPiece(opponent.playerPieces.get(0), false, false);
                 }
                 if (t.getRow() == 1 && (t.getColumn() % 2 == 0)) {
                     t.setOwner(opponent);
                     opponent.addTile(t);
-                    t.addPiece(opponent.playerPieces.get(0));
+                    t.addPiece(opponent.playerPieces.get(0), false, false);
                 }
             }
         }
@@ -71,12 +70,12 @@ public class CheckersFactory implements AbstractGameFactory{
                 if ((t.getRow() == 5 || t.getRow() == 7) && (t.getColumn() % 2 == 0)) {
                     t.setOwner(client);
                     client.addTile(t);
-                    t.addPiece(client.playerPieces.get(0));
+                    t.addPiece(client.playerPieces.get(0), true, false);
                 }
                 if (t.getRow() == 6 && (t.getColumn() % 2 != 0)) {
                     t.setOwner(client);
                     client.addTile(t);
-                    t.addPiece(client.playerPieces.get(0));
+                    t.addPiece(client.playerPieces.get(0), true, false);
                 }
             }
         }

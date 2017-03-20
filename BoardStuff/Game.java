@@ -17,7 +17,7 @@ public abstract class Game extends JFrame {
     GameState state;
 
     Game(String gameTitle, AbstractGameFactory factory) {
-        super(gameTitle);    //super is JFrame
+        super(gameTitle);    //super is JFrame / for now
         agf = factory;
         board = agf.createGameBoard();
         createPlayers();    //creates a client and a opponent
