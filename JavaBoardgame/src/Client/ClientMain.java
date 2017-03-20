@@ -158,10 +158,11 @@ public class ClientMain
 			
 			if(packetIn.getHeader().equals("NAMEREQUEST"))
 			{
+				String[] options = { "Existing User", "New User" };
+				int choice = JOptionPane.showOptionDialog(null, "Please choose an account option. This message will show up again if failed login.", "Login", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
 				while(true)
 				{
-					String[] options = { "Existing User", "New User" };
-					int choice = JOptionPane.showOptionDialog(null, "Please choose an account option. This message will show up again if failed login.", "Login", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (choice == 0)
 					{
 						// Existing user
@@ -170,6 +171,7 @@ public class ClientMain
 						Player temp = new Player(accountName, accountPass);
 						oos.writeObject(new ServerObject("LOGIN", null, temp));
 						ServerObject response = (ServerObject)ois.readObject();
+						
 						if (response.getHeader().equals("VALID"))
 						{
 							account = (Player) response.getPayload();
@@ -184,6 +186,7 @@ public class ClientMain
 						Player temp = new Player(accountName, accountPass);
 						oos.writeObject(new ServerObject("REGISTER", null, temp));
 						ServerObject response = (ServerObject)ois.readObject();
+						
 						if (response.getHeader().equals("VALID"))
 						{
 							account = (Player) response.getPayload();

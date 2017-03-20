@@ -68,10 +68,10 @@ public class ServerMain
 				ois = new ObjectInputStream(socket.getInputStream());
 				boolean received = false;
 				// Get the account of this player by rerunning until a correct response is sent
+				sendPacketToClient(new ServerObject("NAMEREQUEST", "Server", null));
 				while (true)
 				{
 					// Send a request to the client for a Name Object
-					sendPacketToClient(new ServerObject("NAMEREQUEST", "Server", null));
 					
 					ServerObject packetIn = (ServerObject)ois.readObject();
 					
