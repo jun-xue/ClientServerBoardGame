@@ -1,17 +1,20 @@
 package UI;
 
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+
+import Games.AbstractGameFactory;
+import Games.Game;
+import Games.TicTacToeFactory;
 
 public class GameRoomUI extends JFrame
 {
@@ -22,9 +25,13 @@ public class GameRoomUI extends JFrame
 	public JLabel status = new JLabel("Welcome to the Game");
 	public JPanel gameBoard;
 	public JButton leave;
-	public GameRoomUI()
+	public String currentGame;
+	 AbstractGameFactory gf;
+	
+	public GameRoomUI(String gameType)
 	{
 		//setUndecorated(true);
+		currentGame = gameType;
 		setTitle("Challenger Game");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 900, 900);
@@ -46,14 +53,24 @@ public class GameRoomUI extends JFrame
 		leave.setBounds(780, 10, 100, 50);
 		getContentPane().add(leave);
 		
-		gameBoard = new JPanel();
-		gameBoard.setLayout(new BoxLayout(gameBoard, BoxLayout.X_AXIS));
-		gameBoard.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		gameBoard.setAlignmentY(CENTER_ALIGNMENT);
-		gameBoard.setBounds(new Rectangle(10,10,700,700));
-		//THIS NEEDS TO BE THE GAME WINDOW 
-		// UPDATE METHOD FOR MOVE NEEDED
-		// ADD GAME GUI HERE //
+		if (currentGame.equals("TTT"))
+		{
+            gf = new TicTacToeFactory();
+            gameBoard = gf.createGame(gf);
+			gameBoard.setLayout(new GridLayout(1, 1));
+			gameBoard.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+			gameBoard.setAlignmentY(CENTER_ALIGNMENT);
+			gameBoard.setBounds(new Rectangle(50,50,625,625));
+			getContentPane().add(gameBoard);
+		}
+		else if (currentGame.equals("Chess"))
+		{
+			
+		}
+		else if (currentGame.equals("Checkers"))
+		{
+			
+		}
 	}
 	
 	public void setStatus(String newS)
@@ -62,7 +79,7 @@ public class GameRoomUI extends JFrame
 	}
 	
 	public static void main(String args[]) {
-		GameRoomUI test = new GameRoomUI();
+		GameRoomUI test = new GameRoomUI("TTT");
 		test.setVisible(true);
 	} 
 

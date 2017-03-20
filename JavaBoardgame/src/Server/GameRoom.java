@@ -7,10 +7,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 
-import BoardStuff.ChessGame;
-import Games.CheckersGame;
+import Games.AbstractGameFactory;
 import Games.Game;
-import Games.TicTacToeGame;
+import Games.TicTacToeFactory;
+
 
 public class GameRoom 
 {
@@ -20,9 +20,12 @@ public class GameRoom
     public String roomName;
     public int maxPlayers = 2;
     public int currentPlayers = 0;
+    public Player player1;
+    public Player player2;
+    public int boardSize;
+    public String gameName;
     
     // private gameFactory
-    private Game game;
     
     public ServerSocket socket;
     public int port;
@@ -37,18 +40,27 @@ public class GameRoom
     {
     	if (gameNumber == 0)
     	{
+    		gameName = "TTT";
+    		boardSize = 3;
     		//tictactoe
-    		game = new TicTacToeGame();
+            AbstractGameFactory tttgf = new TicTacToeFactory();
+            Game tictactoe = tttgf.createGame(tttgf);
+            tictactoe.runGame();
+            
     	}
     	else if (gameNumber == 1)
     	{
+    		gameName = "Chess";
+    		boardSize = 8;
+
     		//chess
-    		game = new ChessGame();
     	}
     	else if (gameNumber == 2)
     	{
+    		gameName = "Checkers";
+    		boardSize = 8;
+
     		//checkers
-    		game = new CheckersGame();
     	}
     	socket = new ServerSocket(0); // using 0 will just assign it to an unused one.
     	port = socket.getLocalPort();
@@ -77,6 +89,19 @@ public class GameRoom
 			{
 				try 
 				{
+					if (player1 == null && player2 == null)
+					{
+						player1 = this.a;
+					}
+					else if (player1 != null && player2 == null)
+					{
+						player2 = this.a;
+					}
+					else if (player1 == null && player2 != null)
+					{
+						player1 = this.a;
+					}
+					
 					new GameRoomServerHandler(s.accept(), a).start();
 					currentPlayers++;
 				} 
@@ -117,8 +142,11 @@ public class GameRoom
 				ois = new ObjectInputStream(s.getInputStream());
 				outputStreams.add(oos);
 				
+				sendPacketToAllClients(new ServerObject("GAMEINFO", "Server", gameName));
+				
 				while(gameNotWon)
 				{
+					//oos.writeObject(new ServerObject("GAMESTATE", "Server", game.));
 					ServerObject packetIn = (ServerObject)ois.readObject();
 					
 					if(packetIn.getHeader().equals("START"))
@@ -127,7 +155,7 @@ public class GameRoom
 					}
 					else if (packetIn.getHeader().equals("MOVE"))
 					{
-			    		((TicTacToeGame) game).canMakeMove(0, 0, packetIn.getSender());
+			    		
 					}
 					else if (packetIn.getHeader().equals("MESSAGE"))
 					{

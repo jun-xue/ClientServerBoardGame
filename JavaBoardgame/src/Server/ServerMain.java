@@ -159,24 +159,26 @@ public class ServerMain
 						GameRoom newRoom;
 						//payload[0] == room name
 						//payload[1] == gametype
+						
 						synchronized (gameRoomsList) 
 						{
 							newRoom = new GameRoom(((String[])packetIn.getPayload())[0]);
 							newRoom.setUpGame(Integer.parseInt(((String[])packetIn.getPayload())[1]));
 							gameRoomsList.add(newRoom);
 						}
+						
 						ServerSocket gameSocket = new ServerSocket(0);
 						newRoom.port = gameSocket.getLocalPort();
 						newRoom.createGameServer(gameSocket, account);
-						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", newRoom.port));
 						
-						
+						String[] temp = { Integer.toString(newRoom.port), newRoom.gameName};
+						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", temp));						
 					}
 					
-					// The Request to join a room
 					else if(packetIn.getHeader().equals("JOINROOM"))
 					{
-						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", gameRoomsList.get((int) packetIn.getPayload()).port));
+						String[] temp = { Integer.toString(gameRoomsList.get((int) packetIn.getPayload()).port), gameRoomsList.get((int) packetIn.getPayload()).gameName};
+						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", temp));
 
 					
 					}
