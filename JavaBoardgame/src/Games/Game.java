@@ -7,7 +7,7 @@ import java.util.*;
  * @author Daniel Ackerman 23104834
  * @version 0.1.0, 3/10/2017
  */
-public abstract class Game extends JFrame {
+public abstract class Game extends JPanel {
     AbstractGameFactory agf;
     GameBoard board;
     ArrayList<ImageIcon> pieces;
@@ -18,7 +18,7 @@ public abstract class Game extends JFrame {
     GameState state;
 
     Game(String gameTitle, AbstractGameFactory factory) {
-        super(gameTitle);    //super is JFrame
+        //super(gameTitle);    //super is JFrame
         agf = factory;
         board = agf.createGameBoard();
         createPlayers();    //creates a client and a component
@@ -32,7 +32,7 @@ public abstract class Game extends JFrame {
         Dimension desiredFrameSize = agf.getDimension();
         setMinimumSize(desiredFrameSize);
         setMaximumSize(desiredFrameSize);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initializeGameState();
         add(board);
         setVisible(true);

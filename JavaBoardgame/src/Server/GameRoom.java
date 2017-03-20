@@ -8,9 +8,12 @@ import java.net.Socket;
 import java.util.HashSet;
 
 import Games.AbstractGameFactory;
+
+import Games.CheckersGame;
 import Games.Game;
 import Games.TicTacToeFactory;
 
+import Games.TicTacToeGame;
 
 public class GameRoom 
 {
@@ -25,7 +28,8 @@ public class GameRoom
     public int boardSize;
     public String gameName;
     
-    // private gameFactory
+    private AbstractGameFactory gameFactory;
+    private Game game;
     
     public ServerSocket socket;
     public int port;
@@ -33,7 +37,6 @@ public class GameRoom
     public GameRoom(String roomName)
     {
     	this.roomName = roomName;
-    	//gameFactory = new gameFactory();
     }
     
     public void setUpGame(int gameNumber) throws IOException
@@ -42,25 +45,23 @@ public class GameRoom
     	{
     		gameName = "TTT";
     		boardSize = 3;
-    		//tictactoe
             AbstractGameFactory tttgf = new TicTacToeFactory();
             Game tictactoe = tttgf.createGame(tttgf);
             tictactoe.runGame();
-            
+    		gameFactory = new TicTacToeFactory();
+    		game = new TicTacToeGame(gameFactory);
+
     	}
     	else if (gameNumber == 1)
     	{
     		gameName = "Chess";
     		boardSize = 8;
-
-    		//chess
     	}
     	else if (gameNumber == 2)
     	{
     		gameName = "Checkers";
     		boardSize = 8;
 
-    		//checkers
     	}
     	socket = new ServerSocket(0); // using 0 will just assign it to an unused one.
     	port = socket.getLocalPort();
