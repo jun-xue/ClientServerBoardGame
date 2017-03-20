@@ -2,6 +2,8 @@ package Client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import Games.Tile;
 import Server.Player;
 import Server.ServerObject;
 import UI.GameRoomUI;
@@ -214,6 +217,23 @@ public class ClientMain
 		ObjectOutputStream oosRoom;
 		ObjectInputStream oisRoom;
 		GameRoomUI newRoom = new GameRoomUI(gameName);
+		
+		for (Tile[] row: newRoom.gameBoard.board.boardMatrix) {
+        	for (Tile tile: row) { 
+    	    	tile.addMouseListener(new MouseAdapter(){
+
+    			    @Override
+    			    public void mousePressed(MouseEvent e) 
+    			    {
+    			    	//tile.setBackground(Color.RED);
+    			    		//out.println( "MOVEMADE " + tile.x + " " + tile.y);
+    			    	System.out.println(tile.getRow() + " " + tile.getColumn());
+    			    	
+    			    }
+    	    }); 
+    	    }
+		}
+		
 		newRoom.setVisible(true);
 		//this will create the new window and display everything
 		oosRoom = new ObjectOutputStream(socket.getOutputStream());

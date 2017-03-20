@@ -68,10 +68,6 @@ public class GameRoomUI extends JFrame
 					System.out.println(test.getColumn());
 				}
 			}
-			gameBoard.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-			gameBoard.setAlignmentY(CENTER_ALIGNMENT);
-			gameBoard.setBounds(new Rectangle(50,50,625,625));
-			getContentPane().add(gameBoard);
 		}
 		else if (currentGame.equals("Chess"))
 		{
@@ -81,6 +77,10 @@ public class GameRoomUI extends JFrame
 		{
 			
 		}
+		gameBoard.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		gameBoard.setAlignmentY(CENTER_ALIGNMENT);
+		gameBoard.setBounds(new Rectangle(50,50,625,625));
+		getContentPane().add(gameBoard);
 	}
 	
 	public void setStatus(String newS)
