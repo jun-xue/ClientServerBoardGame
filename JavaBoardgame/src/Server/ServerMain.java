@@ -68,9 +68,9 @@ public class ServerMain
 				ois = new ObjectInputStream(socket.getInputStream());
 				boolean received = false;
 				// Get the account of this player by rerunning until a correct response is sent
-				sendPacketToClient(new ServerObject("NAMEREQUEST", "Server", null));
 				while (true)
 				{
+					sendPacketToClient(new ServerObject("NAMEREQUEST", "Server", null));
 					// Send a request to the client for a Name Object
 					
 					ServerObject packetIn = (ServerObject)ois.readObject();
@@ -90,8 +90,8 @@ public class ServerMain
 							Player.putNewAccount((Player)packetIn.getPayload());
 							Player.saveAccounts();
 							
-							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
-							sendPacketToClient(outPacket);
+//							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
+//							sendPacketToClient(outPacket);
 							account = (Player)packetIn.getPayload();
 							received = true;
 						}
@@ -103,12 +103,13 @@ public class ServerMain
 						
 						if (Player.checkForAccount((Player)packetIn.getPayload()) == true && Player.checkPassword((Player)packetIn.getPayload()) == true) // if the name does exist and the password is right
 						{
-							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
-							sendPacketToClient(outPacket);
+//							ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
+//							sendPacketToClient(outPacket);
 							
 							account = (Player)packetIn.getPayload();
-							
+									
 							received = true;
+						
 						}
 						else // the name either doesn't exist or had the wrong password
 						{
@@ -121,13 +122,20 @@ public class ServerMain
 					// Since we are updating usernames across different threads, we need to use synchronized
 					if (received == true)
 					{		
-						System.out.println("User " + account.username + " has connected!\n");
 						synchronized (usernames)
 						{
 							if (!usernames.contains(account.username))
 							{
+								ServerObject outPacket = new ServerObject("VALID", null, (Player)packetIn.getPayload());
+								sendPacketToClient(outPacket);
+								
 								usernames.add(account.username);
+								System.out.println("User " + account.username + " has connected!\n");
 								break;
+							}
+							else
+							{
+								received = false;
 							}
 						}
 					}
