@@ -154,6 +154,9 @@ public class GameRoom
 				outputStreams.add(oos);
 				ArrayList<Tile> moves;
 				
+				System.out.println(player1.username);
+				System.out.println(player2.username);
+
 				sendPacketToAllClients(new ServerObject("GAMEINFO", "Server", gameName));
 				
 				while(!game.state.gameOver)
