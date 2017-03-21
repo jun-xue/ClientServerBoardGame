@@ -13,6 +13,7 @@ import Games.AbstractGameFactory;
 import Games.CheckersFactory;
 import Games.CheckersGame;
 import Games.Game;
+import Games.OthelloFactory;
 import Games.TicTacToeFactory;
 
 import Games.TicTacToeGame;
@@ -59,6 +60,9 @@ public class GameRoom
     	{
     		gameName = "Othello";
     		boardSize = 8;
+    		
+    		gameFactory = new OthelloFactory();
+            game = gameFactory.createGame(gameFactory);
     	}
     	else if (gameNumber == 2)
     	{

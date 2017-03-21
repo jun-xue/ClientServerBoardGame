@@ -39,7 +39,7 @@ public class ClientMain
 	{
 		try{
 		String serverName = JOptionPane.showInputDialog("Enter Server IP address (Default: localhost):");
-		int portNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Server port number (Default: 42069):"));
+		int portNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Server port number (Default: 3456):"));
 		
 		ClientMain client = new ClientMain(serverName, portNumber);
 		client.loadInUI.setVisible(true);

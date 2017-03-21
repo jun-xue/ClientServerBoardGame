@@ -15,6 +15,7 @@ import javax.swing.border.BevelBorder;
 import Games.AbstractGameFactory;
 import Games.CheckersFactory;
 import Games.Game;
+import Games.OthelloFactory;
 import Games.TicTacToeFactory;
 import Games.Tile;
 
@@ -67,8 +68,8 @@ public class GameRoomUI extends JFrame
 		}
 		else if (currentGame.equals("Othello"))
 		{
-//            gf = new OthelloFactory();
-//            gameBoard = gf.createGame(gf);
+            gf = new OthelloFactory();
+            gameBoard = gf.createGame(gf);
 		}
 		else if (currentGame.equals("Checkers"))
 		{

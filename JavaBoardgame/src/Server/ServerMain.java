@@ -24,8 +24,8 @@ public class ServerMain
 		// SERVER START //
 		Player.getAccounts();
 		ServerMain server = new ServerMain();
-		ServerSocket ss = new ServerSocket(42069);
-		System.out.println("Server is running on Port: " + 42069);
+		ServerSocket ss = new ServerSocket(3456);
+		System.out.println("Server is running on Port: " + 3456);
 		
 		try
 		{
