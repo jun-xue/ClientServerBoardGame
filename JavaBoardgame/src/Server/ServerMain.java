@@ -172,7 +172,7 @@ public class ServerMain
 						
 						ServerSocket gameSocket = new ServerSocket(0);
 						newRoom.port = gameSocket.getLocalPort();
-						newRoom.createGameServer(gameSocket, account);
+						newRoom.createGameServer(gameSocket);
 						
 						String[] temp = { Integer.toString(newRoom.port), newRoom.gameName};
 						sendPacketToClient(new ServerObject("CONNECTTOROOM", "Server", temp));						

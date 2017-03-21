@@ -32,8 +32,6 @@ public class ClientMain
 	
 	private String server;
 	private int port;
-	private String[] usernameList;
-	private String[] roomList;
 	private Player account;
 	private LoadInUI loadInUI;
 	
@@ -217,7 +215,7 @@ public class ClientMain
 	
 	public void connectToRoom(String serverName, int port, String gameName) throws UnknownHostException, IOException, ClassNotFoundException
 	{	
-		System.out.println(gameName);
+		System.out.println(account.username + "Connected to a " + gameName);
 		loadInUI.setVisible(false);
         Socket socket = new Socket(serverName, port);
 		ObjectOutputStream oosRoom;
@@ -273,10 +271,6 @@ public class ClientMain
 			public void actionPerformed(ActionEvent e){
 				try 
 				{
-					for (Tile move : moves)
-					{
-						System.out.println(move.getRow() + " " + move.getColumn());
-					}
 					oosRoom.reset();
 					oosRoom.writeObject(new ServerObject("MOVE", account.username, moves));
 					moves.clear();
@@ -296,12 +290,15 @@ public class ClientMain
 			{
 				newRoom.message.append(packetIn.getPayload().toString());
 			}
-			
-			if (packetIn.getHeader().equals("GAMESTATE"))
+			else if (packetIn.getHeader().equals("REQUESTINFO"))
+			{
+				oosRoom.writeObject(new ServerObject("INFO", account.username, account));
+			}
+			else if (packetIn.getHeader().equals("GAMESTATE"))
 			{
 				newRoom.gameBoard.state = (GameState) packetIn.getPayload();
 			}
-			if (packetIn.getHeader().equals("FINISHED"))
+			else if (packetIn.getHeader().equals("FINISHED"))
 			{
 				break;
 			}

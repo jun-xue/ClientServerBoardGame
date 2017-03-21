@@ -26,8 +26,10 @@ public class GameRoom
     public String roomName;
     public int maxPlayers = 2;
     public int currentPlayers = 0;
+    
     public Player player1;
     public Player player2;
+    
     public int boardSize;
     public String gameName;
     
@@ -71,9 +73,9 @@ public class GameRoom
     	port = socket.getLocalPort();
     }
     
-    public void createGameServer(ServerSocket gameSocket, Player account)
+    public void createGameServer(ServerSocket gameSocket)
     {
-    	new GameRoomServer(gameSocket, account).start();
+    	new GameRoomServer(gameSocket).start();
     }
     
     public class GameRoomServer extends Thread
@@ -81,10 +83,9 @@ public class GameRoom
     	private ServerSocket s;
     	private Player a;
     	
-    	public GameRoomServer(ServerSocket s, Player a)
+    	public GameRoomServer(ServerSocket s)
     	{
     		this.s = s;
-    		this.a = a;
     	}
     	
     	public void run()
@@ -113,7 +114,7 @@ public class GameRoom
 						game.opponent.name = player2.username;
 						
 					}
-					new GameRoomServerHandler(s.accept(), a).start();
+					new GameRoomServerHandler(s.accept()).start();
 					currentPlayers++;
 				} 
 				catch (IOException e) 
@@ -130,19 +131,17 @@ public class GameRoom
     	private Socket s;
 		private ObjectInputStream ois;
 		private ObjectOutputStream oos;
-		private boolean gameNotWon = true;
 		
-		public GameRoomServerHandler(Socket s, Player account)
+		public GameRoomServerHandler(Socket s)
 		{
 			this.s = s; 
-			this.acc = account;
-			synchronized (usernames) 
-			{
-				if(!usernames.contains(acc.username)) 
-				{
-					usernames.add(acc.username);
-				}
-			}
+//			synchronized (usernames) 
+//			{
+//				if(!usernames.contains(acc.username)) 
+//				{
+//					usernames.add(acc.username);
+//				}
+//			}
 		}
 		
 		public void run()
@@ -153,42 +152,67 @@ public class GameRoom
 				ois = new ObjectInputStream(s.getInputStream());
 				outputStreams.add(oos);
 				ArrayList<Tile> moves;
-				
-				System.out.println(player1.username);
-				System.out.println(player2.username);
 
 				sendPacketToAllClients(new ServerObject("GAMEINFO", "Server", gameName));
+				sendPacketToClient(new ServerObject("REQUESTINFO", "Server", null));
 				
 				while(!game.state.gameOver)
 				{
+					if (player1 != null && player2 != null)
+					{
+						game.client.name = player1.username;
+						game.opponent.name = player2.username;	
+					}
+					
 					sendPacketToAllClients(new ServerObject("GAMESTATE", "Server", game.state));
 					ServerObject packetIn = (ServerObject)ois.readObject();
 					
 					if (packetIn.getHeader().equals("MOVE"))
 					{
-						moves = new ArrayList<Tile>((ArrayList<Tile>) packetIn.getPayload());
-						
-						for (Tile move : moves)
+						if (game.state.isTurn.name.equals(packetIn.getSender()))
 						{
-							System.out.println(move.getRow() + " " + move.getColumn());
+							moves = new ArrayList<Tile>((ArrayList<Tile>) packetIn.getPayload());
+							for (Tile move : moves)
+							{
+								System.out.println(move.getRow() + " " + move.getColumn());
+							}
+							
+				    		//game.doMove(((Tile[])packetIn.getPayload()));
+							//update this game state
+							moves.clear();
 						}
-						moves.clear();
-			    		//game.doMove(((Tile[])packetIn.getPayload()));
 					}
 					else if (packetIn.getHeader().equals("MESSAGE"))
 					{
 						sendPacketToAllClients(new ServerObject("MESSAGE", packetIn.getSender(), packetIn.getSender() + "> " + packetIn.getPayload() + "\n"));
 					}
+					else if (packetIn.getHeader().equals("INFO"))
+					{
+						System.out.println("Info recived from " + packetIn.getSender());
+						if (player1 == null && player2 == null)
+						{
+							player1 = (Player) packetIn.getPayload();
+						}
+						else if (player1 != null && player2 == null)
+						{
+							player2 = (Player) packetIn.getPayload();
+						}
+						else if (player1 == null && player2 != null)
+						{
+							player1 = (Player) packetIn.getPayload();
+						}
+					}
 					else if (packetIn.getHeader().equals("QUIT"))
 					{
 						sendPacketToAllClients(new ServerObject("FINISHED", "Server", null));
+						System.out.println(player1.username);
+						System.out.println(player2.username);
 						currentPlayers = 0;
 						break;
 					}
 				}
 				
 				//GAME WON
-				sendPacketToAllClients(new ServerObject("MESSAGE", "Server", "Someone Won the game!"));
 			}
 			catch (IOException e)
 			{
