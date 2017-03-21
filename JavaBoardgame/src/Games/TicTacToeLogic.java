@@ -61,6 +61,7 @@ public class TicTacToeLogic implements MouseListener {
     public void makeMove(int row, int column, Tile clicked){
     	tileBoard[row][column].setOwner(isTurn);
         clicked.addPiece(isTurn.playerPieces.get(0));
+        ttt.board.updateScreen();
         System.out.println("Move made by "+ isTurn.name);
         redoMove=false;
     }

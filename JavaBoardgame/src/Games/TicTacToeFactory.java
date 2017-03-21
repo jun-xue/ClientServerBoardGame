@@ -36,18 +36,19 @@ public class TicTacToeFactory implements AbstractGameFactory{
 
     @Override
     public GameBoard createGameBoard() {
-        GameBoard tttBoard = new GameBoard(boardWidth, boardHeight, rows, cols, primary, alternate, gameTitle);
-        return tttBoard;
+        //GameBoard tttBoard = 
+    	return new GameBoard(boardWidth, boardHeight, rows, cols, primary, alternate, gameTitle);
+        //return tttBoard;
     }
 
     @Override
     public void loadImages(Player goesFirst, Player two) {
     	ImageIcon XButton = new ImageIcon(new ImageIcon("src/Assets/DarkX.png")
-                .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH)); 
+                .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)); 
         goesFirst.playerPieces.add(XButton);
         
         ImageIcon OButton = new ImageIcon(new ImageIcon("src/Assets/DarkO.png")
-                .getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
+                .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
         two.playerPieces.add(OButton);
 
 
@@ -55,6 +56,6 @@ public class TicTacToeFactory implements AbstractGameFactory{
 
     @Override
     public void setInitOwnership(GameBoard board, Player client, Player opponent) {}
-
+    	
 
 }
