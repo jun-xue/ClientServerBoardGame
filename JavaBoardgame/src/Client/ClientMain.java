@@ -45,9 +45,9 @@ public class ClientMain
 		client.loadInUI.setVisible(true);
 		client.run();
 		} catch (SocketException se){ 
-			System.out.println("Invalid socket is entered, error: " + se);
+			System.out.println("Invalid sockets are entered, please try again. Error: " + se);
 		} catch (NumberFormatException ne){
-			System.out.println("Please enter the socket numbers, error: " + ne);
+			System.out.println("Please enter the socket numbers. Error: " + ne);
 		}
 		
 	}

@@ -247,7 +247,9 @@ public class ServerMain
 			} 
 			catch (IOException e) 
 			{
+				System.out.println("User " + account.getUsername() + " has disconnected. ");
 				e.printStackTrace();
+				
 			} 
 			catch (ClassNotFoundException e) 
 			{
